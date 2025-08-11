@@ -4,20 +4,17 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ensureCsrf } from '@/lib/csrf';
-import { API_BASE } from '@/lib/env';
-import { getCookie } from '@/lib/cookies';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import {Form, FormControl, FormField, FormItem, FormLabel} from '@/components/ui/form';
+import {LoginValues} from "@/validations/login.schema";
+import {login} from "@/services/auth.service";
 
 const LoginSchema = z.object({
   email: z.email('Enter a valid email'),
   password: z.string().min(1, 'Password is required'),
 });
-
-type LoginValues = z.infer<typeof LoginSchema>;
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -29,46 +26,24 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
 
   async function onSubmit(values: LoginValues) {
     setFormError(null);
-    try {
-      await ensureCsrf();
-      const xsrf = getCookie('XSRF-TOKEN') || '';
+    const { ok, status, payload } = await login(values);
 
-      const res = await fetch(`${API_BASE}/login`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-XSRF-TOKEN': xsrf,
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!res.ok) {
-        let payload: any;
-        try { payload = await res.json(); } catch { payload = { message: await res.text() }; }
-
-        // Map Laravel validation errors (422) to RHF field errors
-        if (res.status === 422 && payload?.errors) {
-          if (payload.errors.email?.[0]) form.setError('email', { type: 'server', message: payload.errors.email[0] });
-          if (payload.errors.password?.[0]) form.setError('password', { type: 'server', message: payload.errors.password[0] });
-          setFormError(payload.message || 'Please fix the errors below.');
-          return;
-        }
-
-        // Auth/CSRF or generic errors
-        if (res.status === 401) setFormError(payload?.message || 'Invalid credentials.');
-        else if (res.status === 419) setFormError('Session/CSRF mismatch. Please refresh and try again.');
-        else setFormError(payload?.message || 'Login failed.');
-        return;
+    if (!ok) {
+      if (status === 422 && payload?.errors) {
+        if (payload.errors.email?.[0]) form.setError('email', { type: 'server', message: payload.errors.email[0] });
+        if (payload.errors.password?.[0]) form.setError('password', { type: 'server', message: payload.errors.password[0] });
+        setFormError(payload.message || 'Please fix the errors below.');
+      } else if (status === 401) {
+        setFormError(payload?.message || 'Invalid credentials.');
+      } else if (status === 419) {
+        setFormError('Session/CSRF mismatch. Please refresh and try again.');
+      } else {
+        setFormError(payload?.message || 'Login failed.');
       }
-
-      // Success → redirect
-      window.location.href = '/dashboard';
-    } catch (err: any) {
-      setFormError(err?.message || 'Login failed.');
+      return;
     }
+
+    window.location.href = '/dashboard';
   }
 
   return (
