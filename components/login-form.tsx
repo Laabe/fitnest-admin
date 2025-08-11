@@ -2,19 +2,13 @@
 
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {Form, FormControl, FormField, FormItem, FormLabel} from '@/components/ui/form';
-import {LoginValues} from "@/validations/login.schema";
-import {login} from "@/services/auth.service";
-
-const LoginSchema = z.object({
-  email: z.email('Enter a valid email'),
-  password: z.string().min(1, 'Password is required'),
-});
+import {LoginSchema, LoginValues} from "@/validations/login.schema";
+import {bootstrapUser, login} from "@/services/auth.service";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -43,6 +37,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
       return;
     }
 
+    await bootstrapUser();
     window.location.href = '/dashboard';
   }
 
