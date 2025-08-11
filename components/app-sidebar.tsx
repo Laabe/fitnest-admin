@@ -42,9 +42,8 @@ const data = {
   navMain: [
     {
       title: "Users",
-      url: "#",
       icon: Users,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "Users List",
@@ -58,13 +57,12 @@ const data = {
     },
     {
       title: "Meals",
-      url: "#",
       icon: HandPlatterIcon,
       isActive: true,
       items: [
         {
           title: "Meals List",
-          url: "#",
+          url: "/meals",
         },
         {
           title: "Create Meal",
@@ -74,9 +72,8 @@ const data = {
     },
     {
       title: "Products",
-      url: "#",
       icon: Apple,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "Products List",
