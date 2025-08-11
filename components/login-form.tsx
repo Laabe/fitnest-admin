@@ -1,42 +1,133 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import React from "react";
+'use client';
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ensureCsrf } from '@/lib/csrf';
+import { API_BASE } from '@/lib/env';
+import { getCookie } from '@/lib/cookies';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+
+const LoginSchema = z.object({
+  email: z.email('Enter a valid email'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type LoginValues = z.infer<typeof LoginSchema>;
+
+export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
+  const [formError, setFormError] = React.useState<string | null>(null);
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: { email: '', password: '' },
+    mode: 'onSubmit',
+  });
+
+  async function onSubmit(values: LoginValues) {
+    setFormError(null);
+    try {
+      await ensureCsrf();
+      const xsrf = getCookie('XSRF-TOKEN') || '';
+
+      const res = await fetch(`${API_BASE}/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-XSRF-TOKEN': xsrf,
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        let payload: any;
+        try { payload = await res.json(); } catch { payload = { message: await res.text() }; }
+
+        // Map Laravel validation errors (422) to RHF field errors
+        if (res.status === 422 && payload?.errors) {
+          if (payload.errors.email?.[0]) form.setError('email', { type: 'server', message: payload.errors.email[0] });
+          if (payload.errors.password?.[0]) form.setError('password', { type: 'server', message: payload.errors.password[0] });
+          setFormError(payload.message || 'Please fix the errors below.');
+          return;
+        }
+
+        // Auth/CSRF or generic errors
+        if (res.status === 401) setFormError(payload?.message || 'Invalid credentials.');
+        else if (res.status === 419) setFormError('Session/CSRF mismatch. Please refresh and try again.');
+        else setFormError(payload?.message || 'Login failed.');
+        return;
+      }
+
+      // Success → redirect
+      window.location.href = '/dashboard';
+    } catch (err: any) {
+      setFormError(err?.message || 'Login failed.');
+    }
+  }
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
-        </p>
-      </div>
-      <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
-        </div>
-        <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline text-orange-600 hover:text-orange-500"
-            >
-              Forgot your password?
-            </a>
+      <Form {...form}>
+        <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className={cn('flex flex-col gap-6', className)}
+            {...props}
+        >
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1 className="text-2xl font-bold">Login to your account</h1>
+            <p className="text-muted-foreground text-sm text-balance">
+              Enter your email below to login to your account
+            </p>
           </div>
-          <Input id="password" type="password" required />
-        </div>
-        <Button type="submit" className="w-full bg-green-900 hover:bg-green-800">
-          Login
-        </Button>
-      </div>
-    </form>
-  )
+
+          {formError && (
+              <div role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {formError}
+              </div>
+          )}
+
+          <div className="grid gap-6">
+            <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="m@example.com" {...field} />
+                      </FormControl>
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center">
+                        <FormLabel>Password</FormLabel>
+                        <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline text-green-900 hover:text-green-800">
+                          Forgot your password?
+                        </a>
+                      </div>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                    </FormItem>
+                )}
+            />
+
+            <Button type="submit" className="w-full bg-green-900 hover:bg-green-800" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Signing in…' : 'Sign in'}
+            </Button>
+          </div>
+        </form>
+      </Form>
+  );
 }
