@@ -1,6 +1,7 @@
 import { API_BASE } from '@/lib/env';
 import {ensureCsrf} from "@/lib/csrf";
 import {getCookie} from "@/lib/cookies";
+import {Meal} from "@/types/meal-type";
 
 async function getAllMeals(): Promise<Meal[]> {
     await ensureCsrf();
@@ -21,14 +22,14 @@ async function getAllMeals(): Promise<Meal[]> {
 }
 
 async function getMealById(id: number): Promise<Meal> {
-    const res = await fetch(`${API_BASE}/api/${id}`);
+    const res = await fetch(`${API_BASE}/api/meals/${id}`);
     if (!res.ok) throw new Error(`Failed to fetch meal with id ${id}`);
     const json: any = await res.json();
     return json.data;
 }
 
 async function createMeal(meal: Meal): Promise<Meal> {
-    const res = await fetch(API_BASE, {
+    const res = await fetch(`${API_BASE}/api/meals`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(meal),
@@ -37,8 +38,8 @@ async function createMeal(meal: Meal): Promise<Meal> {
     return res.json();
 }
 
-async function updateMeal(id: number, meal: Meal): Promise<Meal> {
-    const res = await fetch(`${API_BASE}/${id}`, {
+async function editMeal(id: string | undefined, meal: Meal): Promise<Meal> {
+    const res = await fetch(`${API_BASE}/api/meals/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(meal),
@@ -68,6 +69,6 @@ export const mealService = {
     getAllMeals,
     getMealById,
     createMeal,
-    updateMeal,
+    editMeal,
     deleteMeal,
 };

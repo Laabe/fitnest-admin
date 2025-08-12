@@ -1,5 +1,7 @@
 "use client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import {Card, CardContent} from "@/components/ui/card";
+import {Meal} from "@/types/meal-type";
 
 export default function MealDetailsSheet({
     meal,
@@ -22,7 +24,19 @@ export default function MealDetailsSheet({
 
                 {meal && (
                     <div className="flex flex-col gap-1.5 p-4">
-                        <img src={meal.image} alt={meal.name} className="object-cover rounded" />
+                        <Card className="relative overflow-hidden w-full h-64">
+                            <CardContent className="p-0">
+                                <div
+                                    className="absolute inset-0 w-full h-full object-cover rounded"
+                                    style={{
+                                        backgroundImage: `url(${meal.image})`,
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                    }}
+                                    aria-label={meal.name}
+                                />
+                            </CardContent>
+                        </Card>
                         <h3 className="text-lg font-semibold">{meal.name}</h3>
                         <p className="text-sm text-gray-500">{meal.description}</p>
                         <div className="mt-2 space-y-1">

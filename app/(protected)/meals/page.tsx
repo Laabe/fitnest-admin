@@ -1,18 +1,22 @@
 "use client";
 import { useState } from "react";
-import {useMeals} from "@/hooks/useMeals";
-import MealsTable from "@/app/(protected)/meals/meals-table";
-import MealDetailsSheet from "@/app/(protected)/meals/meal-sheet";
-
+import { useMeals } from "@/hooks/useMeals";
+import MealsTable from "@/app/(protected)/meals/components/meals-table";
+import MealDetailsSheet from "@/app/(protected)/meals/components/meal-details-sheet";
+import { Meal } from "@/types/meal-type";
+import { MealFormSheet } from "@/app/(protected)/meals/components/meal-form-sheet";
 
 export default function MealsPage() {
-    const { data: meals, loading, error, deleteMeal } = useMeals();
-    const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const { data: meals, loading, error, deleteMeal, editMeal, addMeal } = useMeals();
 
+    const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+    // Open details view sheet
     function handleView(meal: Meal) {
         setSelectedMeal(meal);
-        setIsSheetOpen(true);
+        setIsDetailsOpen(true);
     }
 
     if (loading) return <p>Loading meals...</p>;
@@ -27,8 +31,17 @@ export default function MealsPage() {
                 </div>
             </div>
 
-            <MealsTable meals={meals} onView={handleView} onDelete={deleteMeal} />
-            <MealDetailsSheet meal={selectedMeal} open={isSheetOpen} onClose={setIsSheetOpen} />
+            <MealsTable
+                meals={meals}
+                onView={handleView}
+                onDelete={deleteMeal}
+            />
+
+            <MealDetailsSheet
+                meal={selectedMeal}
+                open={isDetailsOpen}
+                onClose={setIsDetailsOpen}
+            />
         </div>
     );
 }

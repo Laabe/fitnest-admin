@@ -2,19 +2,20 @@
 
 import React from "react";
 import { mealTableColumns as baseColumns } from "./meal-table-columns";
-import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import {DataTable} from "@/components/data-table/data-table";
+import {Meal} from "@/types/meal-type";
 
 export default function MealsTable({
-    meals,
-    onView,
-    onDelete,
-}: {
-    meals: Meal[];
-    onView: (meal: Meal) => void;
-    onDelete: (id: string) => void;
+                                       meals,
+                                       onView,
+                                       onDelete,
+                                   }: {
+    meals: Meal[],
+    onView: (meal: Meal) => void,
+    onDelete: (id: string) => void,
 }) {
     const columns = React.useMemo(() => {
         return baseColumns.map((col) => {
@@ -33,7 +34,7 @@ export default function MealsTable({
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => onView(meal)}>View</DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem >Edit</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-500" onClick={() => onDelete(meal.id)}>
                         Delete
                         </DropdownMenuItem>
