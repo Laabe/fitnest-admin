@@ -11,6 +11,7 @@ import {
 import {Button} from "@/components/ui/button";
 import {ArrowUpDown, MoreHorizontal} from "lucide-react";
 import {Checkbox} from "@/components/ui/checkbox";
+import {DataTableColumnHeader} from "@/components/data-table/data-table-column-header";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -46,21 +47,15 @@ export const columns: ColumnDef<Payment>[] = [
     },
     {
         accessorKey: "status",
-        header: "Status",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Status" />
+        ),
     },
     {
         accessorKey: "email",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Email
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Email" />
+        ),
     },
     {
         accessorKey: "amount",
@@ -89,15 +84,8 @@ export const columns: ColumnDef<Payment>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
-                        >
-                            Copy payment ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem className={"text-red-500"}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

@@ -18,12 +18,9 @@ import {
 import {Button} from "@/components/ui/button";
 import React from "react";
 import {Input} from "@/components/ui/input";
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+import {DataTablePagination} from "@/components/data-table/data-table-pagination";
+import {DataTableViewOptions} from "@/components/data-table/data-table-view-options";
+import {Plus, Settings2} from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -60,43 +57,28 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center py-4">
-                <Input
-                    placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter(
-                                (column) => column.getCanHide()
-                            )
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+            <div className="flex items-center justify-between py-4">
+                <div className={"flex flex-1 items-center gap-2"}>
+                    <Input
+                        placeholder="Filter emails..."
+                        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            table.getColumn("email")?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                    />
+                </div>
+                <div className={"flex items-center gap-2"}>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-auto hidden h-8 lg:flex bg-green-900 text-white shadow-sm hover:bg-green-800 hover:text-white"
+                    >
+                        <Plus />
+                        Add Meal
+                    </Button>
+                    <DataTableViewOptions table={table} />
+                </div>
             </div>
             <div className="overflow-hidden rounded-md border shadow dark:border-green-900">
                 <Table>
@@ -142,28 +124,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="text-muted-foreground flex-1 text-sm">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
-            </div>
+            <DataTablePagination table={table} />
         </div>
 
     )
