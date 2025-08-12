@@ -1,7 +1,7 @@
 type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
 type Meal = {
-    id: number,
+    id: string,
     name: string,
     description: string,
     calories: number,

@@ -46,11 +46,21 @@ async function updateMeal(id: number, meal: Meal): Promise<Meal> {
     return res.json();
 }
 
-async function deleteMeal(id: number): Promise<void> {
-    const res = await fetch(`${API_BASE}/${id}`, {
+async function deleteMeal(id: string): Promise<boolean> {
+    await ensureCsrf();
+    const xsrf = getCookie('XSRF-TOKEN') || '';
+    const res = await fetch(`${API_BASE}/api/meals/${id}`, {
         method: 'DELETE',
+        credentials: 'include', // Include cookies for session management
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-XSRF-TOKEN': xsrf,
+        },
     });
     if (!res.ok) throw new Error(`Failed to delete meal with id ${id}`);
+    return res.ok
 }
 
 export const mealService = {
