@@ -21,9 +21,10 @@ async function getAllMeals(): Promise<Meal[]> {
 }
 
 async function getMealById(id: number): Promise<Meal> {
-    const res = await fetch(`${API_BASE}/${id}`);
+    const res = await fetch(`${API_BASE}/api/${id}`);
     if (!res.ok) throw new Error(`Failed to fetch meal with id ${id}`);
-    return res.json();
+    const json: any = await res.json();
+    return json.data;
 }
 
 async function createMeal(meal: Meal): Promise<Meal> {

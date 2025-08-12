@@ -1,22 +1,14 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {MoreHorizontal} from "lucide-react";
 import {Checkbox} from "@/components/ui/checkbox";
 import {DataTableColumnHeader} from "@/components/data-table/data-table-column-header";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-export const columns: ColumnDef<Meal>[] = [
+export const mealTableColumns: ColumnDef<Meal>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -50,24 +42,44 @@ export const columns: ColumnDef<Meal>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Calories" />
         ),
+        cell: ({ row }) => (
+            <span className="text-sm text-gray-700">
+                {row.getValue<number>("calories")} kcal
+            </span>
+        )
     },
     {
         accessorKey: "protein",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Protein" />
         ),
+        cell: ({ row }) => (
+            <span className="text-sm text-gray-700">
+                {row.getValue<number>("protein")} g
+            </span>
+        )
     },
     {
         accessorKey: "carbohydrates",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Carbs" />
         ),
+        cell: ({ row }) => (
+            <span className="text-sm text-gray-700">
+                {row.getValue<number>("carbohydrates")} g
+            </span>
+        )
     },
     {
         accessorKey: "fats",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Fats" />
         ),
+        cell: ({ row }) => (
+            <span className="text-sm text-gray-700">
+                {row.getValue<number>("fats")} g
+            </span>
+        )
     },
     {
         accessorKey: "meal_type",
@@ -96,23 +108,6 @@ export const columns: ColumnDef<Meal>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => {
-            const meal = row.original
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className={"text-red-500"}>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
+        header: "Actions",
     },
 ]

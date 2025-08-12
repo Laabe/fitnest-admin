@@ -20,16 +20,18 @@ import React from "react";
 import {Input} from "@/components/ui/input";
 import {DataTablePagination} from "@/components/data-table/data-table-pagination";
 import {DataTableViewOptions} from "@/components/data-table/data-table-view-options";
-import {Plus, Settings2} from "lucide-react";
+import {Plus} from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+    columns: ColumnDef<TData, TValue>[],
+    data: TData[],
+    emptyMessage?: string
 }
 
 export function DataTable<TData, TValue>({
-    columns,
-    data,
+   columns,
+   data,
+   emptyMessage
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -74,10 +76,10 @@ export function DataTable<TData, TValue>({
                         size="sm"
                         className="ml-auto hidden h-8 lg:flex bg-green-900 text-white shadow-sm hover:bg-green-800 hover:text-white"
                     >
-                        <Plus />
+                        <Plus/>
                         Add Meal
                     </Button>
-                    <DataTableViewOptions table={table} />
+                    <DataTableViewOptions table={table}/>
                 </div>
             </div>
             <div className="overflow-hidden rounded-md border shadow dark:border-green-900">
@@ -117,14 +119,14 @@ export function DataTable<TData, TValue>({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    {emptyMessage || "No data available"}
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-            <DataTablePagination table={table} />
+            <DataTablePagination table={table}/>
         </div>
 
     )

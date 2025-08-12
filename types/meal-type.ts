@@ -8,5 +8,6 @@ type Meal = {
     protein: number,
     carbohydrates: number,
     fats: number,
-    mealType: MealType,
+    image: string,
+    meal_type: MealType,
 }
