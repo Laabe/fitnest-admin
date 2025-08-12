@@ -1,21 +1,34 @@
-import {columns, Payment} from "./columns"
-import {DataTable} from "./data-table"
+"use client";
 
-async function getData(): Promise<Payment[]> {
-    // Fetch data from your API here.
-    return [
-        {
-            id: "728ed52f",
-            amount: 100,
-            status: "pending",
-            email: "m@example.com",
-        },
-        // ...
-    ]
-}
+import React, { useEffect, useState } from "react";
+import { columns } from "./columns";
+import { DataTable } from "./data-table";
+import { mealService } from "@/services/meal.service";
 
-export default async function Page() {
-    const data = await getData()
+export default function Page() {
+    const [data, setData] = useState<Meal[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function fetchMeals() {
+            try {
+                setLoading(true);
+                const meals = await mealService.getAllMeals();
+                setData(meals);
+                setError(null);
+            } catch (err) {
+                setError("Failed to fetch meals.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchMeals();
+    }, []);
+
+    if (loading) return <p>Loading meals...</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
 
     return (
         <div className={"flex min-h-min flex-1 flex-col p-4"}>
@@ -27,12 +40,9 @@ export default async function Page() {
             </div>
             <div className="flex-1">
                 <div className="space-y-4">
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                    />
+                    <DataTable columns={columns} data={data} />
                 </div>
             </div>
         </div>
-    )
+    );
 }

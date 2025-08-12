@@ -5,24 +5,18 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel, DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
-import {ArrowUpDown, MoreHorizontal} from "lucide-react";
+import {Badge} from "@/components/ui/badge";
+import {MoreHorizontal} from "lucide-react";
 import {Checkbox} from "@/components/ui/checkbox";
 import {DataTableColumnHeader} from "@/components/data-table/data-table-column-header";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
-    id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
-}
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Meal>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -46,34 +40,64 @@ export const columns: ColumnDef<Payment>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "status",
+        accessorKey: "name",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Status" />
+            <DataTableColumnHeader column={column} title="Name" />
         ),
     },
     {
-        accessorKey: "email",
+        accessorKey: "calories",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Email" />
+            <DataTableColumnHeader column={column} title="Calories" />
         ),
     },
     {
-        accessorKey: "amount",
-        header: () => <div className="text-right">Amount</div>,
-        cell: ({row}) => {
-            const amount = parseFloat(row.getValue("amount"))
-            const formatted = new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-            }).format(amount)
+        accessorKey: "protein",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Protein" />
+        ),
+    },
+    {
+        accessorKey: "carbohydrates",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Carbs" />
+        ),
+    },
+    {
+        accessorKey: "fats",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Fats" />
+        ),
+    },
+    {
+        accessorKey: "meal_type",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Meal type" />
+        ),
+        cell: ({ row }) => {
+            const mealType = row.getValue<string>("meal_type").toUpperCase();
 
-            return <div className="text-right font-medium">{formatted}</div>
+            // Optional: map meal types to badge colors
+            const colorMap: Record<string, string> = {
+                BREAKFAST: "bg-yellow-100 text-yellow-800",
+                LUNCH: "bg-green-100 text-green-800",
+                DINNER: "bg-blue-100 text-blue-800",
+                SNACK: "bg-pink-100 text-pink-800",
+            };
+
+            const colorClass = colorMap[mealType] || "bg-gray-100 text-gray-800";
+
+            return (
+                <Badge className={colorClass}>
+                    {mealType}
+                </Badge>
+            );
         },
     },
     {
         id: "actions",
         cell: ({ row }) => {
-            const payment = row.original
+            const meal = row.original
 
             return (
                 <DropdownMenu>

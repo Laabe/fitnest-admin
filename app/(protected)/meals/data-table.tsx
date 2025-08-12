@@ -60,10 +60,10 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center justify-between py-4">
                 <div className={"flex flex-1 items-center gap-2"}>
                     <Input
-                        placeholder="Filter emails..."
-                        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                        placeholder="Filter meals..."
+                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                            table.getColumn("email")?.setFilterValue(event.target.value)
+                            table.getColumn("name")?.setFilterValue(event.target.value)
                         }
                         className="max-w-sm"
                     />

@@ -13,10 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function DataTableViewOptions<TData>({
-                                                table,
-                                            }: {
-    table: Table<TData>
-}) {
+    table,
+}: { table: Table<TData> }) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -44,7 +42,7 @@ export function DataTableViewOptions<TData>({
                                 key={column.id}
                                 className="capitalize"
                                 checked={column.getIsVisible()}
-                                onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                                onCheckedChange={(value) => column.toggleVisibility(value)}
                             >
                                 {column.id}
                             </DropdownMenuCheckboxItem>
