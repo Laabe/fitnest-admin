@@ -3,9 +3,9 @@
 import * as React from "react"
 import {
     Apple,
-    AudioWaveform,
-    Command,
-    GalleryVerticalEnd, HandPlatterIcon, LayoutDashboardIcon, Users,
+    HandPlatterIcon,
+    LayoutDashboardIcon,
+    Users,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"

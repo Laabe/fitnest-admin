@@ -15,12 +15,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import {Button} from "@/components/ui/button";
 import React from "react";
 import {Input} from "@/components/ui/input";
 import {DataTablePagination} from "@/components/data-table/data-table-pagination";
 import {DataTableViewOptions} from "@/components/data-table/data-table-view-options";
-import {Plus} from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[],
