@@ -2,10 +2,10 @@
 
 import * as React from "react"
 import {
-  Apple,
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd, HandPlatterIcon, Users,
+    Apple,
+    AudioWaveform,
+    Command,
+    GalleryVerticalEnd, HandPlatterIcon, LayoutDashboardIcon, Users,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -20,70 +20,31 @@ import {
 import {useUserStore} from "@/stores/user";
 import {bootstrapUser} from "@/services/auth.service";
 
-// This is sample data.
 const data = {
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
+      {
+          title: "Dashboard",
+          icon: LayoutDashboardIcon,
+          isActive: false,
+          url: "/dashboard",
+      },
     {
       title: "Users",
       icon: Users,
       isActive: false,
-      items: [
-        {
-          title: "Users List",
-          url: "#",
-        },
-        {
-          title: "Create User",
-          url: "#",
-        },
-      ],
+      url: "/users",
     },
     {
       title: "Meals",
       icon: HandPlatterIcon,
       isActive: true,
-      items: [
-        {
-          title: "Meals List",
-          url: "/meals",
-        },
-        {
-          title: "Create Meal",
-          url: "#",
-        },
-      ],
+      url: "/meals",
     },
     {
       title: "Products",
       icon: Apple,
       isActive: false,
-      items: [
-        {
-          title: "Products List",
-          url: "#",
-        },
-        {
-          title: "Create Product",
-          url: "#",
-        },
-      ],
+        url: "/products",
     },
   ]
 }

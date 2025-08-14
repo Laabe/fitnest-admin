@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useMeals } from "@/hooks/useMeals";
 import MealsTable from "@/app/(protected)/meals/components/meals-table";
 import MealDetailsSheet from "@/app/(protected)/meals/components/meal-details-sheet";
 import { Meal } from "@/types/meal-type";
 import { MealFormSheet } from "@/app/(protected)/meals/components/meal-form-sheet";
 import {Button} from "@/components/ui/button";
+import {Plus} from "lucide-react";
 
 export default function MealsPage() {
     const { data: meals, loading, error, deleteMeal, editMeal, addMeal } = useMeals();
@@ -38,9 +39,10 @@ export default function MealsPage() {
                     <p className="text-muted-foreground">Manage your meals</p>
                 </div>
                 <Button
-                    className="bg-primary text-white hover:bg-primary/90"
+                    className="ml-auto hidden h-8 lg:flex bg-primary text-white shadow-sm hover:text-white hover:bg-primary/90"
                     onClick={() => handleEdit()}
                 >
+                    <Plus/>
                     Add Meal
                 </Button>
             </div>

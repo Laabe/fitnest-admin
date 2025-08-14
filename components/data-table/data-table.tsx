@@ -29,10 +29,10 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({
-                                             columns,
-                                             data,
-                                             emptyMessage
-                                         }: DataTableProps<TData, TValue>) {
+   columns,
+   data,
+   emptyMessage
+}: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -71,14 +71,6 @@ export function DataTable<TData, TValue>({
                     />
                 </div>
                 <div className={"flex items-center gap-2"}>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="ml-auto hidden h-8 lg:flex bg-green-900 text-white shadow-sm hover:bg-green-800 hover:text-white"
-                    >
-                        <Plus/>
-                        Add Meal
-                    </Button>
                     <DataTableViewOptions table={table}/>
                 </div>
             </div>
