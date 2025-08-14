@@ -12,6 +12,7 @@ import {
     BreadcrumbList, BreadcrumbPage,
     BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import {Toaster} from "@/components/ui/sonner";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -64,6 +65,17 @@ export default function RootLayout({
                 </div>
             </SidebarInset>
         </SidebarProvider>
+        <Toaster
+            position="top-right"
+            richColors
+            closeButton={false}
+            toastOptions={{
+                className: "bg-white text-black",
+                style: {
+                    fontFamily: "var(--font-geist-sans)",
+                },
+            }}
+        />
         </body>
         </html>
     );
