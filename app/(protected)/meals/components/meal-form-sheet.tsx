@@ -2,34 +2,29 @@
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { MealForm } from "./meal-form";
-import { mealService } from "@/services/meal.service";
 import { useState } from "react";
-import {Meal} from "@/types/meal-type";
+import { Meal } from "@/types/meal-type";
 
 interface MealFormSheetProps {
-    meal?: Meal; // if present → edit mode
+    meal?: Meal;
     open: boolean;
     onClose: (open: boolean) => void;
+    onSave?: (meal: Meal) => void;
 }
 
-export function MealFormSheet({
-    meal,
-    open,
-    onClose
-}: MealFormSheetProps) {
+export function MealFormSheet({ meal, open, onClose, onSave }: MealFormSheetProps) {
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (data: Meal) => {
         setLoading(true);
+        setError(null);
         try {
-            if (meal?.id) {
-                await mealService.editMeal(meal.id, data);
-            } else {
-                await mealService.createMeal(data);
-            }
+            // call parent onSave
+            if (onSave) onSave(data);
             onClose(false);
-        } catch (error) {
-            console.error("Error saving meal:", error);
+        } catch (err) {
+            setError("Failed to save meal. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -37,15 +32,14 @@ export function MealFormSheet({
 
     return (
         <Sheet open={open} onOpenChange={onClose}>
-            <SheetContent>
+            <SheetContent className="min-w-1/3 max-w-2xl sm:w-full">
                 <SheetHeader>
                     <SheetTitle>{meal ? "Edit Meal" : "Add Meal"}</SheetTitle>
                 </SheetHeader>
-                <MealForm
-                    defaultValues={meal}
-                    onSubmit={handleSubmit}
-                    loading={loading}
-                />
+
+                {error && <p className="text-red-500">{error}</p>}
+
+                <MealForm defaultValues={meal} onSubmit={handleSubmit} loading={loading} />
             </SheetContent>
         </Sheet>
     );

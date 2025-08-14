@@ -1,22 +1,19 @@
 "use client";
+
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import {Card, CardContent} from "@/components/ui/card";
-import {Meal} from "@/types/meal-type";
+import { Card, CardContent } from "@/components/ui/card";
+import { Meal } from "@/types/meal-type";
 
 interface MealDetailsSheetProps {
-    meal: Meal | null; // if present → view mode
+    meal: Meal | null;
     open: boolean;
     onClose: (open: boolean) => void;
 }
 
-export default function MealDetailsSheet({
-    meal,
-    open,
-    onClose,
-}: MealDetailsSheetProps) {
+export default function MealDetailsSheet({ meal, open, onClose }: MealDetailsSheetProps) {
     return (
         <Sheet open={open} onOpenChange={onClose}>
-            <SheetContent>
+            <SheetContent className="min-w-1/3 max-w-2xl sm:w-full">
                 <SheetHeader>
                     <SheetTitle>{meal?.name ?? "Meal details"}</SheetTitle>
                     <SheetDescription>

@@ -8,17 +8,14 @@ import { MoreHorizontal } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
 import { Meal } from "@/types/meal-type";
 
-export default function MealsTable({
-    meals,
-    onView,
-    onEdit,
-    onDelete,
-}: {
+interface MealsTableProps {
     meals: Meal[];
     onView: (meal: Meal) => void;
     onEdit: (meal: Meal) => void;
     onDelete: (id: string) => void;
-}) {
+}
+
+export default function MealsTable({ meals, onView, onEdit, onDelete }: MealsTableProps) {
     const columns = React.useMemo(() => {
         return baseColumns.map((col) => {
             if (col.id === "actions") {
@@ -36,13 +33,8 @@ export default function MealsTable({
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => onView(meal)}>View</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => onEdit(meal)}>Edit</DropdownMenuItem> {/* ✅ now works */}
-                                    <DropdownMenuItem
-                                        className="text-red-500"
-                                        onClick={() => onDelete(meal.id)}
-                                    >
-                                        Delete
-                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onEdit(meal)}>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem className="text-red-500" onClick={() => onDelete(meal.id)}>Delete</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         );
@@ -51,7 +43,7 @@ export default function MealsTable({
             }
             return col;
         });
-    }, [onView, onEdit, onDelete]); // ✅ added onEdit to deps
+    }, [onView, onEdit, onDelete]);
 
     return <DataTable columns={columns} data={meals} emptyMessage="No meals available" />;
 }

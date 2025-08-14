@@ -39,9 +39,16 @@ async function createMeal(meal: Meal): Promise<Meal> {
 }
 
 async function editMeal(id: string | undefined, meal: Meal): Promise<Meal> {
+    await ensureCsrf();
+    const xsrf = getCookie('XSRF-TOKEN') || '';
     const res = await fetch(`${API_BASE}/api/meals/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-XSRF-TOKEN': xsrf,
+        },
         body: JSON.stringify(meal),
     });
     if (!res.ok) throw new Error(`Failed to update meal with id ${id}`);

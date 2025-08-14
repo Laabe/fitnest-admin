@@ -12,7 +12,7 @@ interface FormFieldProps {
 
 export function FormField({ id, label, error, children }: FormFieldProps) {
     return (
-        <div>
+        <div className="flex flex-col space-y-1">
             <Label htmlFor={id}>{label}</Label>
             {children}
             {error && <p className="text-red-500 text-sm">{error}</p>}

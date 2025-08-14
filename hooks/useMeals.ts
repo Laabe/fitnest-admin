@@ -1,7 +1,8 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { mealService } from "@/services/meal.service";
-import {Meal} from "@/types/meal-type";
+import { Meal } from "@/types/meal-type";
 
 export function useMeals() {
     const [data, setData] = useState<Meal[]>([]);
@@ -38,7 +39,7 @@ export function useMeals() {
         try {
             const updated = await mealService.editMeal(id, updatedMeal);
             setData((meals) => meals.map((meal) => (meal.id === id ? updated : meal)));
-        } catch (error) {
+        } catch {
             alert("Failed to update meal.");
         }
     }
@@ -47,9 +48,10 @@ export function useMeals() {
         try {
             const createdMeal = await mealService.createMeal(newMeal);
             setData((meals) => [...meals, createdMeal]);
-        } catch (error) {
+        } catch {
             alert("Failed to add meal.");
         }
     }
+
     return { data, loading, error, deleteMeal, editMeal, addMeal };
 }
