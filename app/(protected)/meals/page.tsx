@@ -7,6 +7,7 @@ import MealDetailsSheet from "@/app/(protected)/meals/components/meal-details-sh
 import { Meal } from "@/types/meal-type";
 import { MealFormSheet } from "@/app/(protected)/meals/components/meal-form-sheet";
 import {Button} from "@/components/ui/button";
+import {Toaster} from "sonner";
 
 export default function MealsPage() {
     const { data: meals, loading, error, deleteMeal, editMeal, addMeal } = useMeals();
@@ -63,7 +64,7 @@ export default function MealsPage() {
                 open={isFormSheetOpen}
                 onClose={setIsFormSheetOpen}
                 onSave={(savedMeal) => {
-                    if (selectedMeal?.id) {
+                    if (typeof savedMeal === 'object' && savedMeal.id) {
                         editMeal(savedMeal.id, savedMeal);
                     } else {
                         addMeal(savedMeal);

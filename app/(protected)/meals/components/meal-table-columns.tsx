@@ -70,16 +70,18 @@ export const mealTableColumns: ColumnDef<Meal>[] = [
         accessorKey: "meal_type",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Meal Type" />,
         cell: ({ row }) => {
-            const mealType = row.getValue<string>("meal_type").toUpperCase();
+            const rawMealType = row.getValue<string>("meal_type");
+            const mealType = rawMealType ? rawMealType.toUpperCase() : "UNKNOWN";
 
             const colorMap: Record<string, string> = {
                 BREAKFAST: "bg-yellow-100 text-yellow-800",
                 LUNCH: "bg-green-100 text-green-800",
                 DINNER: "bg-blue-100 text-blue-800",
                 SNACK: "bg-pink-100 text-pink-800",
+                UNKNOWN: "bg-gray-100 text-gray-800"
             };
 
-            return <Badge className={colorMap[mealType] || "bg-gray-100 text-gray-800"}>{mealType}</Badge>;
+            return <Badge className={colorMap[mealType] || colorMap.UNKOWN}>{mealType}</Badge>;
         },
     },
 

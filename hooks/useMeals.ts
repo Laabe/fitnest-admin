@@ -1,8 +1,8 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { mealService } from "@/services/meal.service";
 import { Meal } from "@/types/meal-type";
+import {toast} from "sonner";
 
 export function useMeals() {
     const [data, setData] = useState<Meal[]>([]);
@@ -25,33 +25,38 @@ export function useMeals() {
         fetchMeals();
     }, []);
 
+    async function addMeal(newMeal: Meal) {
+        try {
+            const createdMeal = await mealService.createMeal(newMeal);
+            setData((prev) => [...prev, createdMeal]);
+            toast("Meal added successfully!");
+        } catch {
+            toast("Failed to add meal.");
+        }
+    }
+
+    async function editMeal(id: string, updatedMeal: Meal) {
+        if (!id) return;
+        try {
+            const updated = await mealService.editMeal(id, updatedMeal);
+            setData((prev) =>
+                prev.map((meal) => (meal.id === id ? { ...meal, ...updated } : meal))
+            );
+            toast("Meal updated successfully!");
+        } catch {
+            toast("Failed to update meal.");        }
+    }
+
     async function deleteMeal(id: string) {
         if (!confirm("Are you sure you want to delete this meal?")) return;
         try {
             await mealService.deleteMeal(id);
-            setData((meals) => meals.filter((meal) => meal.id !== id));
+            setData((prev) => prev.filter((meal) => meal.id !== id));
+            toast("Meal deleted successfully!");
         } catch {
-            alert("Failed to delete meal.");
+            toast("Failed to delete meal.");
         }
     }
 
-    async function editMeal(id: string | undefined, updatedMeal: Meal) {
-        try {
-            const updated = await mealService.editMeal(id, updatedMeal);
-            setData((meals) => meals.map((meal) => (meal.id === id ? updated : meal)));
-        } catch {
-            alert("Failed to update meal.");
-        }
-    }
-
-    async function addMeal(newMeal: Meal) {
-        try {
-            const createdMeal = await mealService.createMeal(newMeal);
-            setData((meals) => [...meals, createdMeal]);
-        } catch {
-            alert("Failed to add meal.");
-        }
-    }
-
-    return { data, loading, error, deleteMeal, editMeal, addMeal };
+    return { data, loading, error, addMeal, editMeal, deleteMeal };
 }

@@ -1,34 +1,57 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Meal } from "@/types/meal-type";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/form-field";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FormField } from "@/components/form-field";
-import {MealFormValues, mealSchema} from "@/validations/meal.schema";
+import { MealFormValues, mealSchema } from "@/validations/meal.schema";
 
 interface MealFormProps {
-    defaultValues?: any;
-    onSubmit: (data: MealFormValues) => void;
+    defaultValues?: Meal;
+    onSubmit: (data: Meal) => void;
     loading?: boolean;
 }
 
 export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
-    const { register, handleSubmit, formState: { errors } } = useForm<MealFormValues>({
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm<MealFormValues>({
         resolver: zodResolver(mealSchema),
-        defaultValues: defaultValues || {},
+        defaultValues: defaultValues || {
+            name: "",
+            description: "",
+            calories: 0,
+            protein: 0,
+            carbohydrates: 0,
+            fats: 0,
+            image: "",
+            meal_type: "breakfast",
+        },
     });
+
+    const mealTypes = [
+        { value: "breakfast", label: "Breakfast" },
+        { value: "lunch", label: "Lunch" },
+        { value: "dinner", label: "Dinner" },
+        { value: "snack", label: "Snack" },
+    ];
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4">
             <FormField id="name" label="Name" error={errors.name?.message}>
-                <Input {...register("name")} placeholder="Meal name" />
+                <Input {...register("name")} />
             </FormField>
 
             <FormField id="description" label="Description" error={errors.description?.message}>
-                <Textarea {...register("description")} placeholder="Meal description" />
+                <Textarea {...register("description")} />
             </FormField>
 
             <div className="grid grid-cols-2 gap-4">
@@ -49,22 +72,31 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
                 </FormField>
             </div>
 
-            <FormField id="meal_type" label="Meal Type" error={errors.meal_type?.message}>
-                <Select {...register("meal_type")}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select meal type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="breakfast">Breakfast</SelectItem>
-                        <SelectItem value="lunch">Lunch</SelectItem>
-                        <SelectItem value="dinner">Dinner</SelectItem>
-                        <SelectItem value="snack">Snack</SelectItem>
-                    </SelectContent>
-                </Select>
+            <FormField id="image" label="Image URL" error={errors.image?.message}>
+                <Input {...register("image")} />
             </FormField>
 
-            <FormField id="image" label="Image URL" error={errors.image?.message}>
-                <Input {...register("image")} placeholder="https://example.com/image.jpg" />
+            {/* Meal Type Field fixed with Controller */}
+            <FormField id="meal_type" label="Meal Type" error={errors.meal_type?.message}>
+                <Controller
+                    name="meal_type"
+                    control={control}
+                    defaultValue={defaultValues?.meal_type || "breakfast"}
+                    render={({ field }) => (
+                        <Select value={field.value} onValueChange={field.onChange}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select meal type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {mealTypes.map((type) => (
+                                    <SelectItem key={type.value} value={type.value}>
+                                        {type.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
             </FormField>
 
             <Button type="submit" disabled={loading}>
