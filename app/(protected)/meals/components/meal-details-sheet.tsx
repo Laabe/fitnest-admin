@@ -3,15 +3,17 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import {Card, CardContent} from "@/components/ui/card";
 import {Meal} from "@/types/meal-type";
 
+interface MealDetailsSheetProps {
+    meal: Meal | null; // if present → view mode
+    open: boolean;
+    onClose: (open: boolean) => void;
+}
+
 export default function MealDetailsSheet({
     meal,
     open,
     onClose,
-}: {
-    meal: Meal | null;
-    open: boolean;
-    onClose: (open: boolean) => void;
-}) {
+}: MealDetailsSheetProps) {
     return (
         <Sheet open={open} onOpenChange={onClose}>
             <SheetContent>

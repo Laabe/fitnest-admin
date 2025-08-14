@@ -4,7 +4,7 @@ import { useMeals } from "@/hooks/useMeals";
 import MealsTable from "@/app/(protected)/meals/components/meals-table";
 import MealDetailsSheet from "@/app/(protected)/meals/components/meal-details-sheet";
 import { Meal } from "@/types/meal-type";
-import { MealFormSheet } from "@/app/(protected)/meals/components/meal-form-sheet";
+import {MealFormSheet} from "@/app/(protected)/meals/components/meal-form-sheet";
 
 export default function MealsPage() {
     const { data: meals, loading, error, deleteMeal, editMeal, addMeal } = useMeals();
@@ -12,12 +12,20 @@ export default function MealsPage() {
     const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
 
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [isFormSheetOpen, setIsFormSheetOpen] = useState(false);
 
     // Open details view sheet
     function handleView(meal: Meal) {
         setSelectedMeal(meal);
         setIsDetailsOpen(true);
     }
+
+    // Open form sheet for editing a meal
+    function handleEdit(meal: Meal) {
+        setSelectedMeal(meal);
+        setIsFormSheetOpen(true);
+    }
+
 
     if (loading) return <p>Loading meals...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
@@ -34,6 +42,7 @@ export default function MealsPage() {
             <MealsTable
                 meals={meals}
                 onView={handleView}
+                onEdit={handleEdit}
                 onDelete={deleteMeal}
             />
 
@@ -41,6 +50,12 @@ export default function MealsPage() {
                 meal={selectedMeal}
                 open={isDetailsOpen}
                 onClose={setIsDetailsOpen}
+            />
+
+            <MealFormSheet
+                meal={selectedMeal || undefined}
+                open={isFormSheetOpen}
+                onClose={setIsFormSheetOpen}
             />
         </div>
     );
