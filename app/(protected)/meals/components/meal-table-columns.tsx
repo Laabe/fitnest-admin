@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Meal } from "@/types/meal-type";
+import { Meal } from "@/types/meal";
 
 export const mealTableColumns: ColumnDef<Meal>[] = [
     // Selection checkbox

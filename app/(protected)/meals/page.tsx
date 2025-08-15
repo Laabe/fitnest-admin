@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useMeals } from "@/hooks/useMeals";
 import MealsTable from "@/app/(protected)/meals/components/meals-table";
 import MealDetailsSheet from "@/app/(protected)/meals/components/meal-details-sheet";
-import { Meal } from "@/types/meal-type";
+import { Meal } from "@/types/meal";
 import { MealFormSheet } from "@/app/(protected)/meals/components/meal-form-sheet";
 import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
