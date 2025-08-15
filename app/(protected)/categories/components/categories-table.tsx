@@ -1,21 +1,21 @@
 "use client";
 
 import React from "react";
-import { mealTableColumns as baseColumns } from "./meal-table-columns";
+import { categoryTableColumns as baseColumns } from "./category-table-columns";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
-import { Meal } from "@/types/meal";
+import {Category} from "@/types/category";
 
-interface MealsTableProps {
-    meals: Meal[];
-    onView: (meal: Meal) => void;
-    onEdit: (meal: Meal) => void;
+interface CategoryTableProps {
+    categories: Category[];
+    onView: (category: Category) => void;
+    onEdit: (category: Category) => void;
     onDelete: (id: string) => void;
 }
 
-export default function MealsTable({ meals, onView, onEdit, onDelete }: MealsTableProps) {
+export default function CategoriesTable({ categories, onView, onEdit, onDelete }: CategoryTableProps) {
     const columns = React.useMemo(() => {
         return baseColumns.map((col) => {
             if (col.id === "actions") {
@@ -45,5 +45,5 @@ export default function MealsTable({ meals, onView, onEdit, onDelete }: MealsTab
         });
     }, [onView, onEdit, onDelete]);
 
-    return <DataTable columns={columns} data={meals} emptyMessage="No meals available" />;
+    return <DataTable columns={columns} data={categories} emptyMessage="No categories available" />;
 }

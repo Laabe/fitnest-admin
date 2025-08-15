@@ -2,7 +2,7 @@
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Card, CardContent } from "@/components/ui/card";
-import { Meal } from "@/types/meal-type";
+import { Meal } from "@/types/meal";
 
 interface MealDetailsSheetProps {
     meal: Meal | null;

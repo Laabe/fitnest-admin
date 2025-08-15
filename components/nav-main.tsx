@@ -19,8 +19,8 @@ interface navMainProps {
 }
 
 export function NavMain({
-                            items,
-                        }: {
+    items,
+}: {
     items: navMainProps[]
 }) {
     const pathname = usePathname();

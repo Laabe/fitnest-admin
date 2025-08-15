@@ -1,12 +1,12 @@
 import { API_BASE } from "@/lib/env";
 import { ensureCsrf } from "@/lib/csrf";
 import { getCookie } from "@/lib/cookies";
-import { Meal } from "@/types/meal";
+import {Category} from "@/types/category";
 
-async function getAllMeals(): Promise<Meal[]> {
+async function getAllCategories(): Promise<Category[]> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meals`, {
+    const res = await fetch(`${API_BASE}/api/categories`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -17,24 +17,24 @@ async function getAllMeals(): Promise<Meal[]> {
         },
     });
 
-    if (!res.ok) throw new Error("Failed to fetch meals");
+    if (!res.ok) throw new Error("Failed to fetch categories");
     const json: any = await res.json();
     return Array.isArray(json?.data) ? json.data : [];
 }
 
-async function getMealById(id: string): Promise<Meal> {
-    const res = await fetch(`${API_BASE}/api/meals/${id}`, {
+async function getCategoryById(id: string): Promise<Category> {
+    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
         credentials: "include",
     });
-    if (!res.ok) throw new Error(`Failed to fetch meal with id ${id}`);
+    if (!res.ok) throw new Error(`Failed to fetch category with id ${id}`);
     const json: any = await res.json();
     return json.data;
 }
 
-async function createMeal(meal: Meal): Promise<Meal> {
+async function createCategory(category: Category): Promise<Category> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meals`, {
+    const res = await fetch(`${API_BASE}/api/categories`, {
         method: "POST",
         credentials: "include", // ✅ important
         headers: {
@@ -43,17 +43,17 @@ async function createMeal(meal: Meal): Promise<Meal> {
             "X-Requested-With": "XMLHttpRequest",
             "X-XSRF-TOKEN": xsrf,
         },
-        body: JSON.stringify(meal),
+        body: JSON.stringify(category),
     });
-    if (!res.ok) throw new Error("Failed to create meal");
+    if (!res.ok) throw new Error("Failed to create category");
     const json = await res.json();
     return json.data;
 }
 
-async function editMeal(id: string, meal: Meal): Promise<Meal> {
+async function editCategory(id: string, category: Category): Promise<Category> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meals/${id}`, {
+    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
         method: "PUT",
         credentials: "include", // ✅ important
         headers: {
@@ -62,17 +62,17 @@ async function editMeal(id: string, meal: Meal): Promise<Meal> {
             "X-Requested-With": "XMLHttpRequest",
             "X-XSRF-TOKEN": xsrf,
         },
-        body: JSON.stringify(meal),
+        body: JSON.stringify(category),
     });
-    if (!res.ok) throw new Error(`Failed to update meal with id ${id}`);
+    if (!res.ok) throw new Error(`Failed to update category with id ${id}`);
     const json = await res.json();
     return json.data;
 }
 
-async function deleteMeal(id: string): Promise<void> {
+async function deleteCategory(id: string): Promise<void> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meals/${id}`, {
+    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -82,13 +82,13 @@ async function deleteMeal(id: string): Promise<void> {
             "X-XSRF-TOKEN": xsrf,
         },
     });
-    if (!res.ok) throw new Error(`Failed to delete meal with id ${id}`);
+    if (!res.ok) throw new Error(`Failed to delete category with id ${id}`);
 }
 
-export const mealService = {
-    getAllMeals,
-    getMealById,
-    createMeal,
-    editMeal,
-    deleteMeal,
+export const categoryService = {
+    getAllCategories,
+    getCategoryById,
+    createCategory,
+    editCategory,
+    deleteCategory,
 };

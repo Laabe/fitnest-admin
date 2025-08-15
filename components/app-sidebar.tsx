@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import {
-    Apple,
+    Blocks,
     HandPlatterIcon,
     LayoutDashboardIcon,
     Users,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import {useUserStore} from "@/stores/user";
 import {bootstrapUser} from "@/services/auth.service";
+import {User} from "@/types/user";
 
 const data = {
   navMain: [
@@ -41,10 +42,10 @@ const data = {
       url: "/meals",
     },
     {
-      title: "Products",
-      icon: Apple,
+      title: "Categories",
+      icon: Blocks,
       isActive: false,
-        url: "/products",
+        url: "/categories",
     },
   ]
 }
