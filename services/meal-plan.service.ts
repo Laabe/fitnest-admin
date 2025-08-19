@@ -1,7 +1,6 @@
 import { API_BASE } from "@/lib/env";
 import { ensureCsrf } from "@/lib/csrf";
 import { getCookie } from "@/lib/cookies";
-import { Meal } from "@/types/meal";
 import {MealPlan} from "@/types/meal-plan";
 
 async function getAll(): Promise<MealPlan[]> {

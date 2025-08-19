@@ -3,9 +3,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { MealPlanForm } from "./meal-plan-form";
 import { useState } from "react";
-import { Meal } from "@/types/meal";
 import {MealPlan} from "@/types/meal-plan";
-import {useMealPlans} from "@/hooks/useMealPlans";
 import {useMeals} from "@/hooks/useMeals";
 
 interface MealPlanFormSheetProps {

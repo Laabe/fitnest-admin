@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { mealService } from "@/services/meal.service";
-import { Meal } from "@/types/meal";
 import {toast} from "sonner";
 import {MealPlan} from "@/types/meal-plan";
 import {mealPlanService} from "@/services/meal-plan.service";

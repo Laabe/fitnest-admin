@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/components/form-field";
 import { MealPlanFormValues, mealPlanSchema } from "@/validations/meal-plan.schema";
 import { MealPlan } from "@/types/meal-plan";
-import {MultiSelect} from "@/components/multi-select-input";
 import {Meal} from "@/types/meal";
+import MultiSelect from "@/components/multi-select-input/multi-select-input";
 
 interface MealPlanFormProps {
     defaultValues?: MealPlan;
