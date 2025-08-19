@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar"
 import {LogoutButton} from "@/components/ui/logout-button";
 import React from "react";
+import {User} from "@/types/user";
 
 export function NavUser({ user }: { user: User | null }) {
   const { isMobile } = useSidebar()
@@ -72,11 +73,11 @@ export function NavUser({ user }: { user: User | null }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem disabled={true}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem disabled={true}>
                 <Bell />
                 Notifications
               </DropdownMenuItem>
