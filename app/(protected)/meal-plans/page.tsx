@@ -1,18 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
 import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
-import {useCategories} from "@/hooks/useCategories";
-import {Category} from "@/types/category";
-import CategoriesTable from "@/app/(protected)/categories/components/categories-table";
-import CategoryDetailsSheet from "@/app/(protected)/categories/components/category-details-sheet";
-import {CategoryFormSheet} from "@/app/(protected)/categories/components/category-form-sheet";
 import {useMealPlans} from "@/hooks/useMealPlans";
 import MealPlanTable from "@/app/(protected)/meal-plans/components/meal-plans-table";
 
 export default function Page() {
-    const { data: mealPlans, loading, error, deleteMealPlan, editMealPlan, addMealPlan } = useMealPlans();
+    const { data: mealPlans, loading, error, deleteMealPlan } = useMealPlans();
 
     if (loading) return <p>Loading categories...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
