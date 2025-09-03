@@ -22,32 +22,33 @@ import {bootstrapUser} from "@/services/auth.service";
 import {User} from "@/types/user";
 
 const data = {
-  navMain: [
-      {
-          title: "Dashboard",
-          icon: LayoutDashboardIcon,
-          isActive: false,
-          url: "/dashboard",
-      },
-    {
-      title: "Users",
-      icon: Users,
-      isActive: false,
-      url: "/users",
-    },
-    {
-      title: "Meals",
-      icon: HandPlatterIcon,
-      isActive: true,
-      url: "/meals",
-    },
-    {
-      title: "Categories",
-      icon: Blocks,
-      isActive: false,
-        url: "/categories",
-    },
-  ]
+    navMain: [
+        {
+            title: "Dashboard",
+            icon: LayoutDashboardIcon,
+            url: "/dashboard",
+        },
+        {
+            title: "Users",
+            icon: Users,
+            url: "/users",
+        },
+        {
+            title: "Meals",
+            icon: HandPlatterIcon,
+            url: "/meals",
+        },
+        {
+            title: "Categories",
+            icon: Blocks,
+            url: "/categories",
+        },
+        {
+            title: "Meal Plans",
+            icon: Blocks,
+            url: "/meal-plans",
+        },
+    ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
