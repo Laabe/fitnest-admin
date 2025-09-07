@@ -1,6 +1,8 @@
 "use client"
 
-import React, {useCallback, useState} from "react"
+import type React from "react"
+
+import {useState, useCallback} from "react"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
@@ -8,9 +10,22 @@ import {Label} from "@/components/ui/label"
 import {Textarea} from "@/components/ui/textarea"
 import {Checkbox} from "@/components/ui/checkbox"
 import {Badge} from "@/components/ui/badge"
-import {ChefHat, Settings, BookOpen, Check, ChevronRight, ChevronLeft, ImageIcon, X, Upload} from "lucide-react"
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command"
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
+import {
+    ChefHat,
+    Settings,
+    BookOpen,
+    Check,
+    ChevronRight,
+    ChevronLeft,
+    ImageIcon,
+    Upload,
+    X,
+    Search,
+    ChevronsUpDown,
+} from "lucide-react"
 import {cn} from "@/lib/utils"
-import {Progress} from "@/components/ui/progress";
 
 const steps = [
     {
@@ -36,6 +51,16 @@ const steps = [
 export function MealPlanForm() {
     const [currentStep, setCurrentStep] = useState(1)
     const [dragActive, setDragActive] = useState(false)
+    const [dropdownOpen, setDropdownOpen] = useState({
+        breakfast: false,
+        lunch: false,
+        dinner: false,
+    })
+    const [selectedFilters, setSelectedFilters] = useState({
+        breakfast: [] as string[],
+        lunch: [] as string[],
+        dinner: [] as string[],
+    })
     const [formData, setFormData] = useState({
         // Step 1 - Meal Plan Details
         name: "",
@@ -61,8 +86,11 @@ export function MealPlanForm() {
         },
 
         // Step 3 - Meal Plan Recipes
-        selectedRecipes: [] as string[],
-        customRecipes: "",
+        selectedRecipes: {
+            breakfast: [] as string[],
+            lunch: [] as string[],
+            dinner: [] as string[],
+        },
     })
 
     const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -89,23 +117,6 @@ export function MealPlanForm() {
                 [period]: value,
             },
         }))
-    }
-
-    const nextStep = () => {
-        if (currentStep < steps.length) {
-            setCurrentStep(currentStep + 1)
-        }
-    }
-
-    const prevStep = () => {
-        if (currentStep > 1) {
-            setCurrentStep(currentStep - 1)
-        }
-    }
-
-    const handleSubmit = () => {
-        console.log("Form submitted:", formData)
-        // Handle form submission here
     }
 
     const handleFileUpload = (file: File | null) => {
@@ -147,6 +158,93 @@ export function MealPlanForm() {
     const removeImage = () => {
         handleFileUpload(null)
     }
+
+    const nextStep = () => {
+        if (currentStep < steps.length) {
+            setCurrentStep(currentStep + 1)
+        }
+    }
+
+    const prevStep = () => {
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1)
+        }
+    }
+
+    const handleSubmit = () => {
+        console.log("Form submitted:", formData)
+        // Handle form submission here
+    }
+
+    const recipesByMeal = {
+        breakfast: [
+            {name: "Avocado Toast", emoji: "🥑"},
+            {name: "Greek Yogurt Parfait", emoji: "🥣"},
+            {name: "Scrambled Eggs", emoji: "🍳"},
+            {name: "Overnight Oats", emoji: "🥣"},
+            {name: "Smoothie Bowl", emoji: "🍓"},
+            {name: "Pancakes", emoji: "🥞"},
+            {name: "French Toast", emoji: "🍞"},
+            {name: "Chia Pudding", emoji: "🥄"},
+            {name: "Breakfast Burrito", emoji: "🌯"},
+            {name: "Granola Bowl", emoji: "🥣"},
+            {name: "Egg Benedict", emoji: "🍳"},
+            {name: "Acai Bowl", emoji: "🍓"},
+            {name: "Bagel & Cream Cheese", emoji: "🥯"},
+            {name: "Protein Shake", emoji: "🥤"},
+            {name: "Waffles", emoji: "🧇"},
+        ],
+        lunch: [
+            {name: "Grilled Chicken Salad", emoji: "🥗"},
+            {name: "Quinoa Buddha Bowl", emoji: "🥙"},
+            {name: "Turkey Sandwich", emoji: "🥪"},
+            {name: "Vegetable Stir Fry", emoji: "🥬"},
+            {name: "Soup & Salad Combo", emoji: "🍲"},
+            {name: "Pasta Salad", emoji: "🍝"},
+            {name: "Caesar Salad", emoji: "🥗"},
+            {name: "Sushi Bowl", emoji: "🍣"},
+            {name: "Mediterranean Wrap", emoji: "🌯"},
+            {name: "Chicken Noodle Soup", emoji: "🍜"},
+            {name: "Fish Tacos", emoji: "🌮"},
+            {name: "Caprese Sandwich", emoji: "🥪"},
+            {name: "Poke Bowl", emoji: "🐟"},
+            {name: "Ramen Bowl", emoji: "🍜"},
+            {name: "Club Sandwich", emoji: "🥪"},
+        ],
+        dinner: [
+            {name: "Salmon with Quinoa", emoji: "🐟"},
+            {name: "Grilled Steak", emoji: "🥩"},
+            {name: "Pasta Primavera", emoji: "🍝"},
+            {name: "Turkey Meatballs", emoji: "🦃"},
+            {name: "Roasted Vegetables", emoji: "🥕"},
+            {name: "Chicken Curry", emoji: "🍛"},
+            {name: "Beef Stir Fry", emoji: "🥢"},
+            {name: "Margherita Pizza", emoji: "🍕"},
+            {name: "Lamb Chops", emoji: "🍖"},
+            {name: "Vegetable Lasagna", emoji: "🍝"},
+            {name: "Chicken Alfredo", emoji: "🍝"},
+            {name: "Shrimp Scampi", emoji: "🦐"},
+            {name: "BBQ Ribs", emoji: "🍖"},
+            {name: "Pad Thai", emoji: "🍜"},
+            {name: "Stuffed Bell Peppers", emoji: "🫑"},
+        ],
+    }
+
+    const toggleRecipe = (mealType: string, recipeName: string) => {
+        setFormData((prev) => {
+            const currentRecipes = prev.selectedRecipes[mealType as keyof typeof prev.selectedRecipes]
+            const isSelected = currentRecipes.includes(recipeName)
+
+            return {
+                ...prev,
+                selectedRecipes: {
+                    ...prev.selectedRecipes,
+                    [mealType]: isSelected ? currentRecipes.filter((r) => r !== recipeName) : [...currentRecipes, recipeName],
+                },
+            }
+        })
+    }
+
     return (
         <div className="flex flex-col lg:flex-row gap-8">
             <div className="lg:min-w-[320px]">
@@ -168,8 +266,7 @@ export function MealPlanForm() {
                                                 className={cn(
                                                     "flex items-center justify-center w-12 h-12 rounded-xl border-2 transition-all duration-300 relative z-10 shadow-sm",
                                                     isActive && "border-primary bg-primary text-primary-foreground shadow-primary/25",
-                                                    isCompleted &&
-                                                    "border-secondary bg-secondary text-secondary-foreground shadow-secondary/25",
+                                                    isCompleted && "border-secondary bg-secondary text-secondary-foreground shadow-secondary/25",
                                                     !isActive &&
                                                     !isCompleted &&
                                                     "border-border bg-background text-muted-foreground hover:border-primary/50",
@@ -248,9 +345,11 @@ export function MealPlanForm() {
                                     <div className="space-y-4">
                                         {imagePreview ? (
                                             <div className="space-y-2">
-                                                <Label className="text-sm font-medium text-muted-foreground">Preview</Label>
+                                                <Label
+                                                    className="text-sm font-medium text-muted-foreground">Preview</Label>
                                                 <div className="relative group">
-                                                    <div className="border-2 border-dashed border-border rounded-xl overflow-hidden bg-muted/30">
+                                                    <div
+                                                        className="border-2 border-dashed border-border rounded-xl overflow-hidden bg-muted/30">
                                                         <img
                                                             src={imagePreview || "/placeholder.svg"}
                                                             alt="Meal plan preview"
@@ -262,7 +361,7 @@ export function MealPlanForm() {
                                                             onClick={removeImage}
                                                             className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                                                         >
-                                                            <X className="w-4 h-4" />
+                                                            <X className="w-4 h-4"/>
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -288,7 +387,8 @@ export function MealPlanForm() {
                                                             dragActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
                                                         )}
                                                     >
-                                                        {dragActive ? <Upload className="w-8 h-8" /> : <ImageIcon className="w-8 h-8" />}
+                                                        {dragActive ? <Upload className="w-8 h-8"/> :
+                                                            <ImageIcon className="w-8 h-8"/>}
                                                     </div>
                                                     <div>
                                                         <p
@@ -299,10 +399,10 @@ export function MealPlanForm() {
                                                         >
                                                             {dragActive ? "Drop your image here" : "Upload a cover photo"}
                                                         </p>
-                                                        <p className="text-sm text-muted-foreground">
-                                                            Drag and drop an image, or click to browse
-                                                        </p>
-                                                        <p className="text-xs text-muted-foreground mt-2">Supports JPG, PNG, GIF up to 10MB</p>
+                                                        <p className="text-sm text-muted-foreground">Drag and drop an
+                                                            image, or click to browse</p>
+                                                        <p className="text-xs text-muted-foreground mt-2">Supports JPG,
+                                                            PNG, GIF up to 10MB</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -370,8 +470,7 @@ export function MealPlanForm() {
                                                         className="w-5 h-5"
                                                     />
                                                     <div>
-                                                        <Label htmlFor={period.key}
-                                                               className="text-base font-medium">
+                                                        <Label htmlFor={period.key} className="text-base font-medium">
                                                             {period.label}
                                                         </Label>
                                                         <p className="text-sm text-muted-foreground">{period.desc}</p>
@@ -390,8 +489,7 @@ export function MealPlanForm() {
                                             {key: "lunch", label: "Lunch"},
                                             {key: "dinner", label: "Dinner"},
                                         ].map((meal) => (
-                                            <div key={meal.key}
-                                                 className="p-6 rounded-xl border border-border bg-card">
+                                            <div key={meal.key} className="p-6 rounded-xl border border-border bg-card">
                                                 <div className="space-y-4">
                                                     <div className="flex items-center space-x-3">
                                                         <Checkbox
@@ -432,80 +530,135 @@ export function MealPlanForm() {
                         {/* Step 3: Meal Plan Recipes */}
                         {currentStep === 3 && (
                             <div className="space-y-8">
-                                <div className="space-y-4">
-                                    <Label className="text-base font-semibold">Popular Recipes</Label>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {[
-                                            {name: "Grilled Chicken Salad", category: "Protein", emoji: "🥗"},
-                                            {name: "Vegetable Stir Fry", category: "Vegetarian", emoji: "🥬"},
-                                            {name: "Salmon with Quinoa", category: "Seafood", emoji: "🐟"},
-                                            {name: "Pasta Primavera", category: "Pasta", emoji: "🍝"},
-                                            {name: "Turkey Meatballs", category: "Protein", emoji: "🦃"},
-                                            {name: "Roasted Vegetables", category: "Vegetarian", emoji: "🥕"},
-                                        ].map((recipe) => (
-                                            <div
-                                                key={recipe.name}
-                                                className="p-4 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors"
-                                            >
-                                                <div className="flex items-center space-x-3">
-                                                    <Checkbox
-                                                        id={recipe.name}
-                                                        checked={formData.selectedRecipes.includes(recipe.name)}
-                                                        onCheckedChange={(checked) => {
-                                                            if (checked) {
-                                                                updateFormData("selectedRecipes", [...formData.selectedRecipes, recipe.name])
-                                                            } else {
-                                                                updateFormData(
-                                                                    "selectedRecipes",
-                                                                    formData.selectedRecipes.filter((r) => r !== recipe.name),
-                                                                )
-                                                            }
-                                                        }}
-                                                        className="w-5 h-5"
-                                                    />
-                                                    <div className="flex-1">
-                                                        <Label htmlFor={recipe.name}
-                                                               className="text-base font-medium flex items-center gap-2">
-                                                            <span>{recipe.emoji}</span>
-                                                            {recipe.name}
-                                                        </Label>
-                                                        <p className="text-sm text-muted-foreground">{recipe.category}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                {Object.entries(formData.meals)
+                                    .filter(([_, isSelected]) => isSelected)
+                                    .map(([mealType, _]) => {
+                                        const allRecipes = recipesByMeal[mealType as keyof typeof recipesByMeal]
+                                        const selectedRecipes = formData.selectedRecipes[mealType as keyof typeof formData.selectedRecipes]
 
-                                {formData.selectedRecipes.length > 0 && (
-                                    <div
-                                        className="space-y-3 p-6 rounded-xl bg-secondary/10 border border-secondary/20">
-                                        <Label className="text-base font-semibold text-secondary">
-                                            Selected Recipes ({formData.selectedRecipes.length})
-                                        </Label>
-                                        <div className="flex flex-wrap gap-2">
-                                            {formData.selectedRecipes.map((recipe) => (
-                                                <Badge key={recipe} variant="secondary"
-                                                       className="px-3 py-1 text-sm">
-                                                    {recipe}
-                                                </Badge>
-                                            ))}
-                                        </div>
+                                        return (
+                                            <div key={mealType} className="space-y-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2 h-8 bg-primary rounded-full"/>
+                                                    <Label
+                                                        className="text-lg font-semibold capitalize">{mealType} Recipes</Label>
+                                                    <Badge variant="secondary" className="ml-auto">
+                                                        {selectedRecipes.length} selected
+                                                    </Badge>
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    <Popover
+                                                        open={dropdownOpen[mealType as keyof typeof dropdownOpen]}
+                                                        onOpenChange={(open) => setDropdownOpen((prev) => ({
+                                                            ...prev,
+                                                            [mealType]: open
+                                                        }))}
+                                                    >
+                                                        <PopoverTrigger asChild>
+                                                            <Button
+                                                                variant="outline"
+                                                                role="combobox"
+                                                                aria-expanded={dropdownOpen[mealType as keyof typeof dropdownOpen]}
+                                                                className="w-full justify-between h-11 text-left font-normal bg-transparent"
+                                                            >
+                                                                <div className="flex items-center gap-2">
+                                                                    <Search className="w-4 h-4 text-muted-foreground"/>
+                                                                    <span className="text-muted-foreground">Search and select {mealType} recipes...</span>
+                                                                </div>
+                                                                <ChevronsUpDown
+                                                                    className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                                            </Button>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent className="w-full p-0" align="start">
+                                                            <Command>
+                                                                <CommandInput
+                                                                    placeholder={`Search ${mealType} recipes...`}
+                                                                    className="h-11"/>
+                                                                <CommandList className="max-h-[300px]">
+                                                                    <CommandEmpty>No recipes found.</CommandEmpty>
+                                                                    <CommandGroup>
+                                                                        {allRecipes.map((recipe) => (
+                                                                            <CommandItem
+                                                                                key={recipe.name}
+                                                                                value={recipe.name}
+                                                                                onSelect={() => {
+                                                                                    toggleRecipe(mealType, recipe.name)
+                                                                                }}
+                                                                                className="flex items-center gap-2 cursor-pointer"
+                                                                            >
+                                                                                <div
+                                                                                    className={cn(
+                                                                                        "w-4 h-4 border border-primary rounded flex items-center justify-center",
+                                                                                        selectedRecipes.includes(recipe.name) && "bg-primary",
+                                                                                    )}
+                                                                                >
+                                                                                    {selectedRecipes.includes(recipe.name) && (
+                                                                                        <Check
+                                                                                            className="w-3 h-3 text-primary-foreground"/>
+                                                                                    )}
+                                                                                </div>
+                                                                                <span
+                                                                                    className="flex items-center gap-2">
+                                          <span>{recipe.emoji}</span>
+                                                                                    {recipe.name}
+                                        </span>
+                                                                            </CommandItem>
+                                                                        ))}
+                                                                    </CommandGroup>
+                                                                </CommandList>
+                                                            </Command>
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                </div>
+
+                                                {selectedRecipes.length > 0 && (
+                                                    <div
+                                                        className="space-y-3 p-4 rounded-xl bg-secondary/10 border border-secondary/20">
+                                                        <Label
+                                                            className="text-sm font-semibold text-secondary capitalize">
+                                                            Selected {mealType} Recipes ({selectedRecipes.length})
+                                                        </Label>
+                                                        <div
+                                                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                                            {selectedRecipes.map((recipeName) => {
+                                                                const recipe = allRecipes.find((r) => r.name === recipeName)
+                                                                return (
+                                                                    <div
+                                                                        key={recipeName}
+                                                                        className="flex items-center justify-between p-3 rounded-lg bg-background border border-border"
+                                                                    >
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span>{recipe?.emoji}</span>
+                                                                            <span
+                                                                                className="font-medium">{recipeName}</span>
+                                                                        </div>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            onClick={() => toggleRecipe(mealType, recipeName)}
+                                                                            className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                                                                        >
+                                                                            <X className="w-3 h-3"/>
+                                                                        </Button>
+                                                                    </div>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    })}
+
+                                {!Object.values(formData.meals).some(Boolean) && (
+                                    <div className="text-center py-12 text-muted-foreground">
+                                        <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50"/>
+                                        <p className="text-lg font-medium mb-2">No meals selected</p>
+                                        <p>Please go back to step 2 and select at least one meal to see recipe
+                                            options.</p>
                                     </div>
                                 )}
-
-                                <div className="space-y-3">
-                                    <Label htmlFor="customRecipes" className="text-base font-semibold">
-                                        Custom Recipe Requests
-                                    </Label>
-                                    <Textarea
-                                        id="customRecipes"
-                                        placeholder="Describe any specific recipes, dietary restrictions, or special requests you'd like to include in your meal plan..."
-                                        value={formData.customRecipes}
-                                        onChange={(e) => updateFormData("customRecipes", e.target.value)}
-                                        className="min-h-[120px] text-base leading-relaxed"
-                                    />
-                                </div>
                             </div>
                         )}
 
