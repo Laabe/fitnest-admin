@@ -3,6 +3,7 @@
 import type React from "react"
 
 import {useState, useCallback} from "react"
+import {useMealPlans} from "@/hooks/useMealPlans";
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
@@ -247,6 +248,7 @@ export function MealPlanForm() {
 
     return (
         <div className="flex flex-col lg:flex-row gap-8">
+            {/*TODO: Refactor into multi tep component*/}
             <div className="lg:min-w-[320px]">
                 <Card className="sticky top-8 shadow-lg border-0 bg-card/50 backdrop-blur-sm">
                     <CardHeader className="pb-4">
@@ -266,7 +268,7 @@ export function MealPlanForm() {
                                                 className={cn(
                                                     "flex items-center justify-center w-12 h-12 rounded-xl border-2 transition-all duration-300 relative z-10 shadow-sm",
                                                     isActive && "border-primary bg-primary text-primary-foreground shadow-primary/25",
-                                                    isCompleted && "border-secondary bg-secondary text-secondary-foreground shadow-secondary/25",
+                                                    isCompleted && "border-primary bg-primary text-primary-foreground shadow-secondary/25",
                                                     !isActive &&
                                                     !isCompleted &&
                                                     "border-border bg-background text-muted-foreground hover:border-primary/50",
@@ -280,7 +282,7 @@ export function MealPlanForm() {
                                                     className={cn(
                                                         "text-sm font-semibold leading-tight",
                                                         isActive && "text-primary",
-                                                        isCompleted && "text-secondary",
+                                                        isCompleted && "text-primary",
                                                         !isActive && !isCompleted && "text-muted-foreground",
                                                     )}
                                                 >
@@ -542,7 +544,7 @@ export function MealPlanForm() {
                                                     <div className="w-2 h-8 bg-primary rounded-full"/>
                                                     <Label
                                                         className="text-lg font-semibold capitalize">{mealType} Recipes</Label>
-                                                    <Badge variant="secondary" className="ml-auto">
+                                                    <Badge className="ml-auto">
                                                         {selectedRecipes.length} selected
                                                     </Badge>
                                                 </div>
@@ -614,9 +616,9 @@ export function MealPlanForm() {
 
                                                 {selectedRecipes.length > 0 && (
                                                     <div
-                                                        className="space-y-3 p-4 rounded-xl bg-secondary/10 border border-secondary/20">
+                                                        className="space-y-3 p-4 rounded-xl bg-primary/10 border border-primary/20">
                                                         <Label
-                                                            className="text-sm font-semibold text-secondary capitalize">
+                                                            className="text-sm font-semibold capitalize">
                                                             Selected {mealType} Recipes ({selectedRecipes.length})
                                                         </Label>
                                                         <div
@@ -684,7 +686,7 @@ export function MealPlanForm() {
                             ) : (
                                 <Button
                                     onClick={handleSubmit}
-                                    className="flex items-center gap-2 px-6 text-base bg-secondary hover:bg-secondary/90"
+                                    className="flex items-center gap-2 px-6 text-base bg-primary hover:bg-primary/90"
                                 >
                                     <Check className="w-4 h-4"/>
                                     Create Meal Plan
