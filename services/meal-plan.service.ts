@@ -2,6 +2,7 @@ import { API_BASE } from "@/lib/env";
 import { ensureCsrf } from "@/lib/csrf";
 import { getCookie } from "@/lib/cookies";
 import { MealPlan } from "@/types/meal-plan";
+import {MealPlanFormValues} from "@/validations/meal-plan.schema";
 
 async function getAllPlans(): Promise<MealPlan[]> {
     await ensureCsrf();
@@ -31,7 +32,7 @@ async function getMealPlanById(id: string): Promise<MealPlan> {
     return json.data;
 }
 
-async function createMealPlan(mealPlan: MealPlan): Promise<MealPlan> {
+async function createMealPlan(mealPlan: MealPlanFormValues): Promise<MealPlan> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
     const res = await fetch(`${API_BASE}/api/meal-plans`, {

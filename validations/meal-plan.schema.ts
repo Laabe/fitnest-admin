@@ -1,40 +1,71 @@
-import { z } from "zod";
+import {z} from "zod";
 
-const mealPlanSchema = z.object({
-    // Step 1 - Meal Plan Details
-    name: z.string().min(1, "Plan name is required").min(3, "Plan name must be at least 3 characters"),
-    description: z.string().min(1, "Description is required").min(10, "Description must be at least 10 characters"),
+export const mealPlanSchema = z.object({
+    id: z.string().optional(),
+    name: z.string()
+        .min(1, "Name is required")
+        .min(3, "Name must be at least 3 characters"),
+    description: z.string()
+        .min(1, "Description is required")
+        .min(10, "Description must be at least 10 characters"),
     photo: z.instanceof(File).nullable().optional(),
-
-    // Step 2 - Meal Plan Settings
-    withSnack: z.boolean(),
-    snackPrice: z.string().refine((val) => !val || !isNaN(Number(val)), "Must be a valid number"),
-    period: z
+    snacks: z.object({
+        included: z.boolean(),
+        price: z
+            .number()
+            .nullable()
+            .refine((val) => val === null || val >= 0, {
+                message: "Snack price must be a valid number",
+            }),
+    }),
+    billingPeriod: z
         .object({
             monthly: z.boolean(),
             weekly: z.boolean(),
         })
-        .refine((data) => data.monthly || data.weekly, "At least one billing period must be selected"),
+        .refine((data) => data.monthly || data.weekly, {
+            message: "At least one billing period must be selected",
+        }),
     meals: z
         .object({
-            breakfast: z.boolean(),
-            lunch: z.boolean(),
-            dinner: z.boolean(),
+            breakfast: z.object({
+                included: z.boolean(),
+                price: z
+                    .number()
+                    .nullable()
+                    .refine((val) => val === null || val >= 0, {
+                        message: "Breakfast price must be a valid number",
+                    }),
+                recipes: z.array(z.string()),
+            }),
+            lunch: z.object({
+                included: z.boolean(),
+                price: z
+                    .number()
+                    .nullable()
+                    .refine((val) => val === null || val >= 0, {
+                        message: "Lunch price must be a valid number",
+                    }),
+                recipes: z.array(z.string()),
+            }),
+            dinner: z.object({
+                included: z.boolean(),
+                price: z
+                    .number()
+                    .nullable()
+                    .refine((val) => val === null || val >= 0, {
+                        message: "Dinner price must be a valid number",
+                    }),
+                recipes: z.array(z.string()),
+            }),
         })
-        .refine((data) => data.breakfast || data.lunch || data.dinner, "At least one meal must be selected"),
-    mealPrices: z.object({
-        breakfast: z.string().refine((val) => !val || !isNaN(Number(val)), "Must be a valid number"),
-        lunch: z.string().refine((val) => !val || !isNaN(Number(val)), "Must be a valid number"),
-        dinner: z.string().refine((val) => !val || !isNaN(Number(val)), "Must be a valid number"),
-    }),
+        .refine(
+            (data) =>
+                data.breakfast.included
+                || data.lunch.included
+                || data.dinner.included,
+            {message: "At least one meal must be selected"}
+        ),
+});
 
-    // Step 3 - Meal Plan Recipes
-    selectedRecipes: z.object({
-        breakfast: z.array(z.string()),
-        lunch: z.array(z.string()),
-        dinner: z.array(z.string()),
-    }),
-    customRecipes: z.string().optional(),
-})
-
-type MealPlanFormData = z.infer<typeof mealPlanSchema>
+export type MealPlanFormValues = z.infer<typeof mealPlanSchema>

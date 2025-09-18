@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { MealPlan } from "@/types/meal-plan";
 import { mealPlanService } from "@/services/meal-plan.service";
+import {MealPlanFormValues} from "@/validations/meal-plan.schema";
 
 
 export function useMealPlans() {
@@ -26,7 +27,7 @@ export function useMealPlans() {
         fetchAll();
     }, []);
 
-    async function addMealPlan(newMealPlan: MealPlan) {
+    async function addMealPlan(newMealPlan: MealPlanFormValues) {
         try {
             const createdMealPlan = await mealPlanService.createMealPlan(newMealPlan);
             setData((prev) => [...prev, createdMealPlan]);
