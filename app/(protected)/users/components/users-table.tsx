@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
-import {Category} from "@/types/category";
 import {User} from "@/types/user";
 
 interface UserTableProps {

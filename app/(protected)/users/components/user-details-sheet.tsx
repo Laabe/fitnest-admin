@@ -1,7 +1,6 @@
 "use client";
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Card, CardContent } from "@/components/ui/card";
 import {User} from "@/types/user";
 
 interface UserDetailsSheetProps {

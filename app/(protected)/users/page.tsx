@@ -6,14 +6,12 @@ import {Plus} from "lucide-react";
 import {useUsers} from "@/hooks/useUsers";
 import {User} from "@/types/user";
 import UsersTable from "@/app/(protected)/users/components/users-table";
-import UserDetailsSheet from "@/app/(protected)/users/components/user-details-sheet";
 import {UserFormSheet} from "@/app/(protected)/users/components/user-form-sheet";
 
 export default function Page() {
     const { data: users, loading, error, deleteUser, editUser, addUser } = useUsers();
 
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isFormSheetOpen, setIsFormSheetOpen] = useState(false);
 
     // Open form sheet for add or edit

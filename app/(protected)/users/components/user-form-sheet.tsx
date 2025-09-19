@@ -3,7 +3,6 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { UserForm } from "./user-form";
 import { useState } from "react";
-import {Category} from "@/types/category";
 import {User} from "@/types/user";
 
 interface UserFormSheetProps {
