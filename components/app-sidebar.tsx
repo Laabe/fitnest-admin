@@ -6,6 +6,7 @@ import {
     HandPlatterIcon,
     LayoutDashboardIcon,
     Users,
+    Wheat
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -47,6 +48,11 @@ const data = {
             title: "Meal Plans",
             icon: Blocks,
             url: "/meal-plans",
+        },
+        {
+            title: "Products",
+            icon: Wheat,
+            url: "/products",
         },
     ]
 }
