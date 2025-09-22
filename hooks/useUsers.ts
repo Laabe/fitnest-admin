@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {toast} from "sonner";
 import {User} from "@/types/user";
 import {userService} from "@/services/user.service";
@@ -58,5 +58,28 @@ export function useUsers() {
         }
     }
 
-    return { data, loading, error, addUser, editUser, deleteUser };
+    async function updateMyProfile(updatedUser: User) {
+        try {
+            setLoading(true);
+            await userService.updateMyProfile(updatedUser);
+        } catch {
+            toast("Failed to update category.");
+        } finally {
+            setLoading(false);
+            toast("Profile updated successfully!");
+        }
+    }
+
+    async function getUser(id: string) {
+        try {
+            setLoading(true);
+            return await userService.getUserById(id);
+        } catch {
+            setError("Failed to fetch user.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return { data, loading, error, addUser, editUser, deleteUser, getUser, updateMyProfile };
 }

@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/sidebar"
 import {LogoutButton} from "@/components/ui/logout-button";
 import React from "react";
+import Link from "next/link";
+import {User} from "@/types/user";
 
 export function NavUser({ user }: { user: User | null }) {
   const { isMobile } = useSidebar()
@@ -74,7 +76,7 @@ export function NavUser({ user }: { user: User | null }) {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheck />
-                Account
+                <Link href={"/settings/profile"}>Account</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />

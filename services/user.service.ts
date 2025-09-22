@@ -85,10 +85,30 @@ async function deleteUser(id: string): Promise<void> {
     if (!res.ok) throw new Error(`Failed to delete user with id ${id}`);
 }
 
+async function updateMyProfile(user: User): Promise<User> {
+    await ensureCsrf();
+    const xsrf = getCookie("XSRF-TOKEN") || "";
+    const res = await fetch(`${API_BASE}/api/settings/profile`, {
+        method: "PUT",
+        credentials: "include", // ✅ important
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-XSRF-TOKEN": xsrf,
+        },
+        body: JSON.stringify(user),
+    });
+    if (!res.ok) throw new Error(`Failed to update mu profile`);
+    const json = await res.json();
+    return json.data;
+}
+
 export const userService = {
     getAllUsers,
     getUserById,
     createUser,
     editUser,
     deleteUser,
+    updateMyProfile,
 };
