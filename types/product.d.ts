@@ -26,5 +26,18 @@ export interface Product {
     category: Category,
     variants?: Variant[],
     status: status,
-    image?: File,
+    images?: File[],
+}
+
+export interface ProductPayload {
+    id?: string,
+    name: string,
+    description: string,
+    sku: string,
+    price: Price,
+    stock_quantity: number,
+    category_id: string,
+    variants?: Variant[],
+    status: status,
+    images?: File[],
 }
