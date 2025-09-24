@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import {toast} from "sonner";
-import {Product} from "@/types/product";
+import {Product, ProductPayload} from "@/types/product";
 import {productService} from "@/services/product.service";
 
 export function useProducts() {
@@ -26,13 +26,16 @@ export function useProducts() {
         }
     }
 
-    async function createProduct(product: Product) {
+    async function createProduct(product: ProductPayload) {
         try {
-            const newProduct = await productService.createProduct(product);
-            setData((prev) => [...prev, newProduct]);
-            toast("Product added successfully!");
-        } catch {
+            setLoading(true);
+            await productService.createProduct(product);
+        } catch (error) {
+            console.log("Failed to create product", error);
             toast("Failed to add product.");
+        } finally {
+            toast("Product created successfully.");
+            setLoading(false);
         }
     }
 

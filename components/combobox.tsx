@@ -26,27 +26,27 @@ type Option = {
 
 interface ComboboxProps {
     options: Option[]
+    value?: string
+    onChange?: (value: string) => void
     placeholder?: string
     searchPlaceholder?: string
     emptyMessage?: string
-    onChange?: (value: string) => void
 }
 
 export function Combobox({
                              options,
+                             value = "",
+                             onChange,
                              placeholder = "Select an option...",
                              searchPlaceholder = "Search...",
                              emptyMessage = "No results found.",
-                             onChange,
                          }: ComboboxProps) {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("")
 
     const selectedLabel = options.find((opt) => opt.value === value)?.label
 
     const handleSelect = (currentValue: string) => {
         const newValue = currentValue === value ? "" : currentValue
-        setValue(newValue)
         setOpen(false)
         onChange?.(newValue)
     }
@@ -61,12 +61,12 @@ export function Combobox({
                     className="w-full justify-between text-muted-foreground"
                 >
                     {selectedLabel || placeholder}
-                    <ChevronsUpDown className="opacity-50"/>
+                    <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0">
                 <Command>
-                    <CommandInput placeholder={searchPlaceholder} className="h-9"/>
+                    <CommandInput placeholder={searchPlaceholder} className="h-9" />
                     <CommandList>
                         <CommandEmpty>{emptyMessage}</CommandEmpty>
                         <CommandGroup>

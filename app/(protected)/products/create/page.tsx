@@ -10,14 +10,19 @@ import {Combobox} from "@/components/combobox";
 import {useCategories} from "@/hooks/useCategories";
 import {ProductVariants} from "@/app/(protected)/products/components/product-variants-form";
 import {Button} from "@/components/ui/button";
+import {ProductFormValues, ProductSchema} from "@/app/(protected)/products/validations/product.schema";
+import {useProducts} from "@/hooks/useProducts";
+import {Controller, FormProvider, useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+
 
 export default function Page() {
-
-    const {data: categories} = useCategories()
+    const {data: categories} = useCategories();
+    const {createProduct, loading, error} = useProducts();
     const categoriesOptions = categories.map((category) => ({
         label: category.name,
         value: category.id,
-    }))
+    }));
 
     const statusOptions = [
         {
@@ -31,17 +36,61 @@ export default function Page() {
         {
             label: "Archived",
             value: "archived",
-        }
+        },
     ]
+    const methods = useForm<ProductFormValues>({
+        resolver: zodResolver(ProductSchema),
+        defaultValues: {
+            name: "",
+            description: "",
+            sku: "",
+            price: {
+                base: 0,
+                discount: 0
+            },
+            status: "draft",
+            category_id: "",
+            stock_quantity: 0,
+            images: [],
+            variants: []
+        }
+    });
+
+    const {control, register, handleSubmit, formState: {errors}} = methods;
+
+    const onSubmit = async (data: ProductFormValues) => {
+        console.log(data);
+        await createProduct(data)
+    }
+
     return (
         <div className="w-2/3 mx-auto">
-            <form>
-                <div className={"mb-4 flex flex-col justify-between space-y-4 lg:flex-row lg:items-center lg:space-y-2"}>
+            <FormProvider {...methods}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                <div
+                    className={"mb-4 mt-2 flex flex-col justify-between space-y-4 lg:flex-row lg:items-center lg:space-y-2"}>
                     <h1 className={"text-2xl font-bold tracking-tight"}>Add Product</h1>
                     <div className={"flex gap-2"}>
-                        <Button variant={"secondary"}>Discard</Button>
-                        <Button variant={"outline"}>Save Draft</Button>
-                        <Button>Publish</Button>
+                        <Button
+                            type={"button"}
+                            variant={"secondary"}
+                            disabled={loading}
+                        >
+                            Discard
+                        </Button>
+                        <Button
+                            type={"submit"}
+                            variant={"outline"}
+                            disabled={loading}
+                        >
+                            Save Draft
+                        </Button>
+                        <Button
+                            type={"submit"}
+                            disabled={loading}
+                        >
+                            Publish
+                        </Button>
                     </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4 items-start">
@@ -49,15 +98,30 @@ export default function Page() {
                         <Card>
                             <CardTitle className={"px-5"}>Product Details</CardTitle>
                             <CardContent>
-                                <FormField id={"name"} label={"name"} error={""}>
-                                    <Input placeholder={"Enter product name..."} />
+                                <FormField id={"name"} label={"name"} error={errors.name?.message}>
+                                    <Input
+                                        placeholder={"Enter product name..."}
+                                        {...register("name")}
+                                    />
                                 </FormField>
-                                <FormField id={"sku"} label={"sku"} error={""}>
-                                    <Input placeholder={"Enter product SKU..."} />
+                                <FormField id={"sku"} label={"sku"} error={errors.sku?.message}>
+                                    <Input
+                                        placeholder={"Enter product SKU..."}
+                                        {...register("sku")}
+                                    />
                                 </FormField>
-                                <FormField id={"description"} label={"description"} error={""}>
-                                    <Textarea placeholder={"Enter product description..."} className={"mb-2"}/>
-                                    <p className={"text-muted-foreground text-sm"}>Set a description to the product for better visibility.</p>
+                                <FormField
+                                    id={"description"}
+                                    label={"description"}
+                                    error={errors.description?.message}
+                                >
+                                    <Textarea
+                                        className={"mb-2"}
+                                        placeholder={"Enter product description..."}
+                                        {...register("description")}
+                                    />
+                                    <p className={"text-muted-foreground text-sm"}>Set a description to the product for
+                                        better visibility.</p>
                                 </FormField>
                             </CardContent>
                         </Card>
@@ -70,7 +134,7 @@ export default function Page() {
                         <Card>
                             <CardTitle className={"px-5"}>Variants</CardTitle>
                             <CardContent>
-                                <ProductVariants />
+                                <ProductVariants/>
                             </CardContent>
                         </Card>
                     </div>
@@ -78,29 +142,92 @@ export default function Page() {
                         <Card>
                             <CardTitle className={"px-5"}>Pricing</CardTitle>
                             <CardContent>
-                                <FormField id={"price.base"} label={"Base Price"} error={""}>
-                                    <Input type={"number"} placeholder={"0.00"} />
+                                <FormField
+                                    id={"price.base"}
+                                    label={"Base Price"}
+                                    error={errors.price?.base?.message}>
+                                    <Input
+                                        type={"number"}
+                                        placeholder={"0.00"}
+                                        {...register("price.base", {valueAsNumber: true})}
+                                    />
                                 </FormField>
-                                <FormField id={"price.discount"} label={"Discounted Price"} error={""}>
-                                    <Input placeholder={"0.00"} />
+                                <FormField
+                                    id={"price.discount"}
+                                    label={"Discounted Price"}
+                                    error={errors.price?.discount?.message}
+                                >
+                                    <Input
+                                        type={"number"}
+                                        placeholder={"0.00"}
+                                        {...register("price.discount", {valueAsNumber: true})}
+                                    />
                                 </FormField>
                             </CardContent>
                         </Card>
                         <Card>
-                            <CardTitle className={"px-5"}>Status</CardTitle>
                             <CardContent>
-                                <Combobox options={statusOptions} placeholder={"Select status..."} />
+                                <FormField
+                                    id={"stock_quantity"}
+                                    label={"Stock"}
+                                    error={errors.stock_quantity?.message}
+                                >
+                                    <Input
+                                        type={"number"}
+                                        placeholder={"0"}
+                                        {...register("stock_quantity", {valueAsNumber: true})}
+                                    />
+                                </FormField>
                             </CardContent>
                         </Card>
                         <Card>
-                            <CardTitle className={"px-5"}>Category</CardTitle>
                             <CardContent>
-                                <Combobox options={categoriesOptions} placeholder={"Select category..."} />
+                                <FormField
+                                id="status"
+                                label="status"
+                                error={errors.status?.message}
+                                >
+                                <Controller
+                                    name="status"
+                                    control={control}
+                                    render={({field}) => (
+                                        <Combobox
+                                            options={statusOptions}
+                                            placeholder="Select category..."
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                    )}
+                                />
+                            </FormField>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardContent>
+                                <FormField
+                                    id="category_id"
+                                    label="Category"
+                                    error={errors.category_id?.message}
+                                >
+                                    <Controller
+                                        name="category_id"
+                                        control={control}
+                                        render={({field}) => (
+                                            <Combobox
+                                                options={categoriesOptions}
+                                                placeholder="Select category..."
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        )}
+                                    />
+                                </FormField>
                             </CardContent>
                         </Card>
                     </div>
                 </div>
             </form>
+            </FormProvider>
         </div>
     )
 }

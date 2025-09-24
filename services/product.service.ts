@@ -1,7 +1,7 @@
 import { API_BASE } from "@/lib/env";
 import { ensureCsrf } from "@/lib/csrf";
 import { getCookie } from "@/lib/cookies";
-import {Product} from "@/types/product";
+import {Product, ProductPayload} from "@/types/product";
 
 async function getProducts(): Promise<Product[]> {
     await ensureCsrf();
@@ -31,7 +31,7 @@ async function getProduct(id: string): Promise<Product> {
     return json.data;
 }
 
-async function createProduct(product: Product): Promise<Product> {
+async function createProduct(product: ProductPayload): Promise<Product> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
     const res = await fetch(`${API_BASE}/api/products`, {

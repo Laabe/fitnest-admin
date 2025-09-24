@@ -1,87 +1,105 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus } from "lucide-react"
-import {FormField} from "@/components/form-field";
-
-interface Variant {
-    id: string
-    option: string
-    value: string
-    price: string
-}
+import { Plus, Trash2 } from "lucide-react"
+import { FormField } from "@/components/form-field"
+import {useFieldArray, useFormContext, Controller, FieldErrors} from "react-hook-form"
+import {ProductFormValues} from "@/app/(protected)/products/validations/product.schema";
 
 export function ProductVariants() {
-    const [variants, setVariants] = useState<Variant[]>([
-        { id: "1", option: "", value: "", price: "" },
-    ])
+    const {
+        control,
+        register,
+        formState: { errors },
+    } = useFormContext<ProductFormValues>()
 
-    const addVariant = () => {
-        const newVariant: Variant = {
-            id: Date.now().toString(),
-            option: "",
-            value: "",
-            price: "",
-        }
-        setVariants([...variants, newVariant])
-    }
+    const typedErrors = errors as FieldErrors<ProductFormValues>
 
-    const updateVariant = (id: string, field: keyof Variant, value: string) => {
-        setVariants(variants.map((variant) => (variant.id === id ? { ...variant, [field]: value } : variant)))
-    }
-
-    const removeVariant = (id: string) => {
-        if (variants.length > 1) {
-            setVariants(variants.filter((variant) => variant.id !== id))
-        }
-    }
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "variants",
+    })
 
     return (
         <div className="space-y-6">
             <div className="space-y-4">
-                <div className="space-y-3">
-                    {variants.map((variant) => (
-                        <div key={variant.id} className="grid grid-cols-3 gap-4">
-                            <FormField id={"variant.name"} label={"Name"}>
-                                <Select value={variant.option} onValueChange={(value) => updateVariant(variant.id, "option", value)}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="size">Size</SelectItem>
-                                        <SelectItem value="color">Color</SelectItem>
-                                        <SelectItem value="material">Material</SelectItem>
-                                        <SelectItem value="style">Style</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </FormField>
+                {fields.map((field, index) => {
+                    const optionError = typedErrors.variants?.[index]?.option?.message
+                    const valueError  = typedErrors.variants?.[index]?.value?.message
+                    const priceError  = typedErrors.variants?.[index]?.price?.message
 
-                            <FormField id={"variant.value"} label={"value"} >
-                                <Input
-                                    placeholder=""
-                                    value={variant.value}
-                                    onChange={(e) => updateVariant(variant.id, "value", e.target.value)}
+                    return (
+                        <div key={field.id} className="grid grid-cols-4 gap-4">
+                            {/* Option select */}
+                            <FormField
+                                id={`variants.${index}.option`}
+                                label="Option"
+                                error={optionError}
+                            >
+                                <Controller
+                                    name={`variants.${index}.option`}
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select value={field.value} onValueChange={field.onChange}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select option" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="size">Size</SelectItem>
+                                                <SelectItem value="color">Color</SelectItem>
+                                                <SelectItem value="material">Material</SelectItem>
+                                                <SelectItem value="style">Style</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
                                 />
                             </FormField>
 
-                            <FormField id={"variant.price"} label={"price"} >
+                            {/* Value input */}
+                            <FormField
+                                id={`variants.${index}.value`}
+                                label="Value"
+                                error={valueError}
+                            >
                                 <Input
-                                    placeholder=""
-                                    value={variant.price}
-                                    onChange={(e) => updateVariant(variant.id, "price", e.target.value)}
+                                    {...register(`variants.${index}.value`)}
+                                    placeholder="Enter value"
                                 />
                             </FormField>
+
+                            {/* Price input */}
+                            <FormField
+                                id={`variants.${index}.price`}
+                                label="Price"
+                                error={priceError}
+                            >
+                                <Input
+                                    type="number"
+                                    step="0.01"
+                                    {...register(`variants.${index}.price`, { valueAsNumber: true })}
+                                    placeholder="0.00"
+                                />
+                            </FormField>
+
+                            {/* Remove button */}
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => remove(index)}
+                                className="text-red-500"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
                         </div>
-                    ))}
-                </div>
+                    )
+                })}
 
                 <Button
                     type="button"
                     variant="ghost"
-                    onClick={addVariant}
+                    onClick={() => append({ option: "", value: "", price: 0 })}
                     className="flex items-center gap-2 text-sm font-medium text-foreground hover:bg-muted"
                 >
                     <Plus className="h-4 w-4" />
