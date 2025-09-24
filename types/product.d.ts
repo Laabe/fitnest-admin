@@ -1,3 +1,5 @@
+import Datetime from "zod/src/v3/benchmarks/datetime";
+
 type status = 'active' | 'draft' | 'archived';
 
 type Price = {
@@ -17,7 +19,7 @@ type Variant = {
 }
 
 export interface Product {
-    id?: string,
+    id: string,
     name: string,
     description: string,
     sku: string,
@@ -27,6 +29,7 @@ export interface Product {
     variants?: Variant[],
     status: status,
     images?: File[],
+    created_at: Datetime
 }
 
 export interface ProductPayload {
