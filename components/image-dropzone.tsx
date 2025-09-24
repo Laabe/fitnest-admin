@@ -3,7 +3,6 @@
 import {useState, useCallback} from "react"
 import {useDropzone} from "react-dropzone"
 import {Button} from "@/components/ui/button"
-import {Card} from "@/components/ui/card"
 import {X, Upload, Plus} from "lucide-react"
 import Image from "next/image"
 
