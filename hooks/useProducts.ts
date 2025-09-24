@@ -1,70 +1,80 @@
 "use client";
-import { useEffect, useState } from "react";
-import {toast} from "sonner";
+import {useState} from "react";
 import {Product, ProductPayload} from "@/types/product";
 import {productService} from "@/services/product.service";
 
 export function useProducts() {
-    const [data, setData] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        getProducts();
-    }, []);
+    const getProduct = async (id: string) => {
+        try {
+            setLoading(true);
+            const product = await productService.getProduct(id);
+            setProduct(product);
+        } catch (error) {
+            console.log("Failed to get product", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    async function getProducts() {
+    const getProducts = async () => {
         try {
             setLoading(true);
             const products = await productService.getProducts();
-            setData(products);
-            setError(null);
-        } catch {
+            setProducts(products);
+        } catch (error) {
+            console.log(error);
             setError("Failed to fetch products");
         } finally {
             setLoading(false);
         }
     }
 
-    async function createProduct(product: ProductPayload) {
+    const createProduct = async (product: ProductPayload): Promise<Product | null> => {
         try {
             setLoading(true);
-            await productService.createProduct(product);
+            return await productService.createProduct(product)
         } catch (error) {
             console.log("Failed to create product", error);
-            toast("Failed to add product.");
+            return null
         } finally {
-            toast("Product created successfully.");
             setLoading(false);
         }
     }
 
-    async function updateProduct(id: string, product: Product) {
+    const updateProduct = async (id: string, product: Product) => {
         try {
-            const updated = await productService.updateProduct(id, product);
-            setData((prev) =>
-                prev.map((item) => (item.id === id ? { ...item, ...updated } : item))
-            );
-            toast("Product updated successfully!");
-        } catch {
-            toast("Failed to update product.");        }
+            setLoading(true);
+            await productService.updateProduct(id, product);
+        } catch (error) {
+            console.log("Failed to update product", error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    async function deleteProduct(id: string) {
+    const deleteProduct = async (id: string) => {
         if (!confirm("Are you sure you want to delete this product?")) return;
         try {
+            setLoading(true);
             await productService.deleteProduct(id);
-            setData((prev) => prev.filter((item) => item.id !== id));
-            toast("Product deleted successfully!");
-        } catch {
-            toast("Failed to delete product.");
+        } catch (error) {
+            console.log("Failed to delete product", error);
+        } finally {
+            setLoading(false);
         }
     }
 
     return {
-        data,
+        product,
+        products,
         loading,
         error,
+        getProduct,
         getProducts,
         createProduct,
         updateProduct,
