@@ -1,17 +1,30 @@
 "use client";
 
-import React from "react";
+import React, {useEffect} from "react";
 import { productTableColumns as baseColumns } from "./product-table-columns";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
-import { Meal } from "@/types/meal";
 import {useProducts} from "@/hooks/useProducts";
+import { useRouter } from "next/navigation";
+import {toast} from "sonner";
 
 
 export default function ProductTable() {
-    const { data: products, deleteProduct, loading } = useProducts();
+    const router = useRouter();
+    const { products, loading, getProducts, deleteProduct } = useProducts();
+
+    useEffect(() => {
+        getProducts();
+    }, []);
+
+    const onDelete = (id: string) => {
+        deleteProduct(id).then(() => {
+            getProducts();
+            toast.success("Product deleted successfully.");
+        })
+    }
 
     const columns = React.useMemo(() => {
         return baseColumns.map((col) => {
@@ -29,11 +42,15 @@ export default function ProductTable() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>View</DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => {router.push(`/products/${product.id}`)}}
+                                    >
+                                        View
+                                    </DropdownMenuItem>
                                     <DropdownMenuItem>Edit</DropdownMenuItem>
                                     <DropdownMenuItem
                                         className="text-red-500"
-                                        onClick={() => deleteProduct(product.id)}
+                                        onClick={() => onDelete(product.id)}
                                         disabled={loading}
                                     >
                                         Delete
