@@ -6,7 +6,7 @@ import {categoryService} from "@/services/category.service";
 
 export function useCategories() {
     const [data, setData] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
