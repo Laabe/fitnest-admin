@@ -1,6 +1,6 @@
-import { API_BASE } from "@/lib/env";
-import { ensureCsrf } from "@/lib/csrf";
-import { getCookie } from "@/lib/cookies";
+import {API_BASE} from "@/lib/env";
+import {ensureCsrf} from "@/lib/csrf";
+import {getCookie} from "@/lib/cookies";
 import {Product, ProductPayload} from "@/types/product";
 
 async function getProducts(): Promise<Product[]> {
@@ -23,10 +23,21 @@ async function getProducts(): Promise<Product[]> {
 }
 
 async function getProduct(id: string): Promise<Product> {
-    const res = await fetch(`${API_BASE}/api/products/${id}`, {
-        credentials: "include",
-    });
-    if (!res.ok) throw new Error(`Failed to fetch product with id ${id}`);
+    const res = await fetch(
+        `${API_BASE}/api/products/${id}`,
+        {credentials: "include"}
+    );
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to get product with id ${id}`);
+        }
+        throw errorData;
+    }
+
     const json: any = await res.json();
     return json.data;
 }
@@ -45,17 +56,27 @@ async function createProduct(product: ProductPayload): Promise<Product> {
         },
         body: JSON.stringify(product),
     });
-    if (!res.ok) throw new Error("Failed to create product");
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to get products list`);
+        }
+        throw errorData;
+    }
+
     const json = await res.json();
     return json.data;
 }
 
-async function updateProduct(id: string, product: Product): Promise<Product> {
+async function updateProduct(id: string, product: ProductPayload): Promise<Product> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
     const res = await fetch(`${API_BASE}/api/products/${id}`, {
         method: "PUT",
-        credentials: "include", // ✅ important
+        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -64,7 +85,17 @@ async function updateProduct(id: string, product: Product): Promise<Product> {
         },
         body: JSON.stringify(product),
     });
-    if (!res.ok) throw new Error(`Failed to update product with id ${id}`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to update product with id ${id}`);
+        }
+        throw errorData;
+    }
+
     const json = await res.json();
     return json.data;
 }
@@ -82,12 +113,21 @@ async function deleteProduct(id: string): Promise<void> {
             "X-XSRF-TOKEN": xsrf,
         },
     });
-    if (!res.ok) throw new Error(`Failed to delete product with id ${id}`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to delete product with id ${id}`);
+        }
+        throw errorData;
+    }
 }
 
 export const productService = {
-    getProducts,
     getProduct,
+    getProducts,
     createProduct,
     updateProduct,
     deleteProduct,
