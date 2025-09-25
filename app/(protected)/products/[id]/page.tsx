@@ -5,8 +5,8 @@ import {CircleDollarSign, HandCoins, Layers2, PencilLine, Trash2, Truck} from "l
 import {Card, CardContent} from "@/components/ui/card";
 import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious} from "@/components/ui/carousel";
 import {useProducts} from "@/hooks/useProducts";
-import {useEffect, useState} from "react";
-import {notFound, useParams, useRouter} from "next/navigation";
+import {useEffect} from "react";
+import {useParams, useRouter} from "next/navigation";
 import {toast} from "sonner";
 
 export default function Page() {
@@ -18,16 +18,16 @@ export default function Page() {
         id && getProduct(id as string);
     }, [id]);
 
-    if (!product) {
-        notFound()
-    }
-
     const onDelete = (id: string) => {
-        deleteProduct(id).then(r => {
+        deleteProduct(id).then(() => {
                 router.push(`/products`)
                 toast.success("Product deleted successfully.");
             }
         );
+    }
+
+    if (!product) {
+        return <div>Product not found</div>;
     }
 
     return (
@@ -55,7 +55,10 @@ export default function Page() {
                     </div>
                 </div>
                 <div className={"flex items-center space-x-2"}>
-                    <Button disabled={loading}>
+                    <Button
+                        disabled={loading}
+                        onClick={() => router.push(`/products/${product.id}/edit`)}
+                    >
                         <PencilLine/>
                         Edit
                     </Button>
@@ -122,7 +125,7 @@ export default function Page() {
                             <HandCoins className={"text-gray-400"}/>
                             <div className="flex flex-col gap-1">
                                 <span className="text-muted-foreground text-sm">Total Revenue</span>
-                                <span className="text-lg font-semibold">$45,938</span>
+                                <span className="text-lg font-semibold">45,938 MAD</span>
                             </div>
                         </div>
                     </div>

@@ -1,107 +1,229 @@
 "use client";
 
-import React from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Meal } from "@/types/meal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React, { useEffect } from "react";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { FormField } from "@/components/form-field";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MealFormValues, mealSchema } from "@/validations/meal.schema";
+import { ProductImageDropzone } from "@/components/image-dropzone";
+import { Combobox } from "@/components/combobox";
+import { ProductVariants } from "@/app/(protected)/products/components/product-variants-form";
+import { Button } from "@/components/ui/button";
+import { ProductFormValues, ProductSchema } from "@/app/(protected)/products/validations/product.schema";
+import { Controller, FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface MealFormProps {
-    defaultValues?: Meal;
-    onSubmit: (data: Meal) => void;
+interface ProductFormProps {
+    mode: "create" | "edit";
+    initialValues?: ProductFormValues;
+    categoriesOptions: { label: string; value: string }[];
+    statusOptions: { label: string; value: string }[];
     loading?: boolean;
+    onSubmit: (data: ProductFormValues) => Promise<void>;
 }
 
-export function ProductForm({ defaultValues, onSubmit, loading }: MealFormProps) {
-    const {
-        register,
-        handleSubmit,
-        control,
-        formState: { errors },
-    } = useForm<MealFormValues>({
-        resolver: zodResolver(mealSchema),
-        defaultValues: defaultValues || {
+export function ProductForm({
+    mode,
+    initialValues,
+    categoriesOptions,
+    statusOptions,
+    loading,
+    onSubmit,
+ }: ProductFormProps) {
+    const methods = useForm<ProductFormValues>({
+        resolver: zodResolver(ProductSchema),
+        defaultValues: initialValues || {
             name: "",
             description: "",
-            calories: 0,
-            protein: 0,
-            carbohydrates: 0,
-            fats: 0,
-            image: "",
-            meal_type: "breakfast",
+            sku: "",
+            price: { base: 0, discount: 0 },
+            status: "draft",
+            category_id: "",
+            stock_quantity: 0,
+            images: [],
+            variants: [],
         },
     });
 
-    const mealTypes = [
-        { value: "breakfast", label: "Breakfast" },
-        { value: "lunch", label: "Lunch" },
-        { value: "dinner", label: "Dinner" },
-        { value: "snack", label: "Snack" },
-    ];
+    const {
+        control,
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+    } = methods;
+
+    // when `initialValues` changes (e.g., on edit load), update the form
+    useEffect(() => {
+        if (initialValues) reset(initialValues, { keepDirtyValues: true });
+    }, [initialValues, reset]);
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4">
-            <FormField id="name" label="Name" error={errors.name?.message}>
-                <Input {...register("name")} />
-            </FormField>
+        <div className="w-2/3 mx-auto">
+            <FormProvider {...methods}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="mb-4 mt-2 flex flex-col justify-between space-y-4 lg:flex-row lg:items-center lg:space-y-2">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            {mode === "create" ? "Add Product" : "Edit Product"}
+                        </h1>
+                        <div className="flex gap-2">
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                disabled={loading}
+                                onClick={() => reset()}
+                            >
+                                Discard
+                            </Button>
+                            <Button type="submit" disabled={loading}>
+                                Save
+                            </Button>
+                        </div>
+                    </div>
 
-            <FormField id="description" label="Description" error={errors.description?.message}>
-                <Textarea {...register("description")} />
-            </FormField>
+                    {/* Product fields */}
+                    <div className="grid grid-cols-3 gap-4 items-start">
+                        <div className="grid col-span-2 gap-4">
+                            <Card>
+                                <CardTitle className="px-5">Product Details</CardTitle>
+                                <CardContent>
+                                    <FormField id="name" label="name" error={errors.name?.message}>
+                                        <Input
+                                            placeholder="Enter product name..."
+                                            {...register("name")}
+                                        />
+                                    </FormField>
+                                    <FormField id="sku" label="sku" error={errors.sku?.message}>
+                                        <Input
+                                            placeholder="Enter product SKU..."
+                                            {...register("sku")}
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        id="description"
+                                        label="description"
+                                        error={errors.description?.message}
+                                    >
+                                        <Textarea
+                                            className="mb-2"
+                                            placeholder="Enter product description..."
+                                            {...register("description")}
+                                        />
+                                        <p className="text-muted-foreground text-sm">
+                                            Set a description to the product for better visibility.
+                                        </p>
+                                    </FormField>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardTitle className="px-5">Product Images</CardTitle>
+                                <CardContent>
+                                    <ProductImageDropzone />
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardTitle className="px-5">Variants</CardTitle>
+                                <CardContent>
+                                    <ProductVariants />
+                                </CardContent>
+                            </Card>
+                        </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <FormField id="calories" label="Calories" error={errors.calories?.message}>
-                    <Input type="number" {...register("calories", { valueAsNumber: true })} />
-                </FormField>
+                        {/* Sidebar fields */}
+                        <div className="grid gap-4">
+                            <Card>
+                                <CardTitle className="px-5">Pricing</CardTitle>
+                                <CardContent>
+                                    <FormField
+                                        id="price.base"
+                                        label="Base Price"
+                                        error={errors.price?.base?.message}
+                                    >
+                                        <Input
+                                            type="number"
+                                            placeholder="0.00"
+                                            {...register("price.base", { valueAsNumber: true })}
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        id="price.discount"
+                                        label="Discounted Price"
+                                        error={errors.price?.discount?.message}
+                                    >
+                                        <Input
+                                            type="number"
+                                            placeholder="0.00"
+                                            {...register("price.discount", { valueAsNumber: true })}
+                                        />
+                                    </FormField>
+                                </CardContent>
+                            </Card>
 
-                <FormField id="protein" label="Protein (g)" error={errors.protein?.message}>
-                    <Input type="number" {...register("protein", { valueAsNumber: true })} />
-                </FormField>
+                            <Card>
+                                <CardContent>
+                                    <FormField
+                                        id="stock_quantity"
+                                        label="Stock"
+                                        error={errors.stock_quantity?.message}
+                                    >
+                                        <Input
+                                            type="number"
+                                            placeholder="0"
+                                            {...register("stock_quantity", { valueAsNumber: true })}
+                                        />
+                                    </FormField>
+                                </CardContent>
+                            </Card>
 
-                <FormField id="carbohydrates" label="Carbs (g)" error={errors.carbohydrates?.message}>
-                    <Input type="number" {...register("carbohydrates", { valueAsNumber: true })} />
-                </FormField>
+                            <Card>
+                                <CardContent>
+                                    <FormField
+                                        id="status"
+                                        label="status"
+                                        error={errors.status?.message}
+                                    >
+                                        <Controller
+                                            name="status"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Combobox
+                                                    options={statusOptions}
+                                                    placeholder="Select status..."
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                            )}
+                                        />
+                                    </FormField>
+                                </CardContent>
+                            </Card>
 
-                <FormField id="fats" label="Fats (g)" error={errors.fats?.message}>
-                    <Input type="number" {...register("fats", { valueAsNumber: true })} />
-                </FormField>
-            </div>
-
-            <FormField id="image" label="Image URL" error={errors.image?.message}>
-                <Input {...register("image")} />
-            </FormField>
-
-            {/* Meal Type Field fixed with Controller */}
-            <FormField id="meal_type" label="Meal Type" error={errors.meal_type?.message}>
-                <Controller
-                    name="meal_type"
-                    control={control}
-                    defaultValue={defaultValues?.meal_type || "breakfast"}
-                    render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select meal type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {mealTypes.map((type) => (
-                                    <SelectItem key={type.value} value={type.value}>
-                                        {type.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-            </FormField>
-
-            <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save Meal"}
-            </Button>
-        </form>
+                            <Card>
+                                <CardContent>
+                                    <FormField
+                                        id="category_id"
+                                        label="Category"
+                                        error={errors.category_id?.message}
+                                    >
+                                        <Controller
+                                            name="category_id"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Combobox
+                                                    options={categoriesOptions}
+                                                    placeholder="Select category..."
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                            )}
+                                        />
+                                    </FormField>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </form>
+            </FormProvider>
+        </div>
     );
 }
