@@ -21,8 +21,9 @@ export default function ProductTable() {
 
     const onDelete = (id: string) => {
         deleteProduct(id).then(() => {
-            getProducts();
-            toast.success("Product deleted successfully.");
+            getProducts().then(
+                () => toast.success("Product deleted successfully.")
+            )
         })
     }
 
@@ -47,7 +48,11 @@ export default function ProductTable() {
                                     >
                                         View
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => router.push(`/products/${product.id}/edit`)}
+                                    >
+                                        Edit
+                                    </DropdownMenuItem>
                                     <DropdownMenuItem
                                         className="text-red-500"
                                         onClick={() => onDelete(product.id)}

@@ -8,6 +8,7 @@ import {useProducts} from "@/hooks/useProducts";
 import {useEffect} from "react";
 import {useParams, useRouter} from "next/navigation";
 import {toast} from "sonner";
+import {formatLaravelErrors} from "@/utils/formatLaravelErrors";
 
 export default function Page() {
     const {id} = useParams();
@@ -15,15 +16,28 @@ export default function Page() {
     const {getProduct, deleteProduct, loading, product} = useProducts();
 
     useEffect(() => {
-        id && getProduct(id as string);
+        id && getProduct(id as string).catch((error: any) => {
+            const messages: string[] = error.message?.split("\n") ?? ["Failed to fetch product!"];
+            toast.error("Failed to fetch product", {
+                    description: formatLaravelErrors(messages),
+                }
+            );
+        });
     }, [id]);
 
     const onDelete = (id: string) => {
-        deleteProduct(id).then(() => {
-                router.push(`/products`)
-                toast.success("Product deleted successfully.");
-            }
-        );
+        deleteProduct(id)
+            .then(() => {
+                    router.push(`/products`)
+                    toast.success("Product deleted successfully.");
+                }
+            ).catch((error: any) => {
+            const messages: string[] = error.message?.split("\n") ?? ["Failed to delete product!"];
+                toast.error("Failed to delete product", {
+                    description: formatLaravelErrors(messages),
+                }
+            );
+        });
     }
 
     if (!product) {
