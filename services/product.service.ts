@@ -17,7 +17,15 @@ async function getProducts(): Promise<Product[]> {
         },
     });
 
-    if (!res.ok) throw new Error("Failed to fetch products");
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to get products list`);
+        }
+        throw errorData;
+    }
     const json: any = await res.json();
     return Array.isArray(json?.data) ? json.data : [];
 }
@@ -62,7 +70,7 @@ async function createProduct(product: ProductPayload): Promise<Product> {
         try {
             errorData = await res.json();
         } catch {
-            throw new Error(`Failed to get products list`);
+            throw new Error(`Failed to create product`);
         }
         throw errorData;
     }
