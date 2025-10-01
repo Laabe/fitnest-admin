@@ -4,6 +4,7 @@ import { getCookie } from '@/lib/cookies';
 import { LoginValues } from '@/validations/login.schema';
 import {useUserStore} from "@/stores/user";
 import {clientJson} from "@/lib/fetcher";
+import {User} from "@/types/user";
 
 export async function fetchMe() {
     // Works for both cookie mode and token mode because clientJson attaches credentials and Authorization when present
