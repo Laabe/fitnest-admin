@@ -9,6 +9,7 @@ import { DataTable } from "@/components/data-table/data-table";
 import {useProducts} from "@/hooks/useProducts";
 import { useRouter } from "next/navigation";
 import {toast} from "sonner";
+import {formatLaravelErrors} from "@/utils/formatLaravelErrors";
 
 
 export default function ProductTable() {
@@ -16,14 +17,26 @@ export default function ProductTable() {
     const { products, loading, getProducts, deleteProduct } = useProducts();
 
     useEffect(() => {
-        getProducts();
+        getProducts().catch((error: any) => {
+            const messages: string[] = error.message?.split("\n") ?? ["Failed to fetch products list!"];
+            toast.error("Failed to fetch products list", {
+                    description: formatLaravelErrors(messages),
+                }
+            );
+        });
     }, []);
 
     const onDelete = (id: string) => {
         deleteProduct(id).then(() => {
             getProducts().then(
                 () => toast.success("Product deleted successfully.")
-            )
+            ).catch((error: any) => {
+                const messages: string[] = error.message?.split("\n") ?? ["Failed to delete product!"];
+                toast.error("Failed to delete product", {
+                        description: formatLaravelErrors(messages),
+                    }
+                );
+            });
         })
     }
 
@@ -70,5 +83,5 @@ export default function ProductTable() {
         });
     }, [deleteProduct]);
 
-    return <DataTable columns={columns} data={products} emptyMessage="No meals available" />;
+    return <DataTable columns={columns} data={products} emptyMessage="No products available" />;
 }

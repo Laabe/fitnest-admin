@@ -53,6 +53,8 @@ export function ProductForm({
         reset,
     } = methods;
 
+    if (mode === "create") loading = false
+
     // when `initialValues` changes (e.g., on edit load), update the form
     useEffect(() => {
         if (initialValues) reset(initialValues, { keepDirtyValues: true });
