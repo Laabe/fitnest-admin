@@ -1,27 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
 import {useUsers} from "@/hooks/useUsers";
 import {User} from "@/types/user";
 import UsersTable from "@/app/(protected)/users/components/users-table";
 import {UserFormSheet} from "@/app/(protected)/users/components/user-form-sheet";
+import {toast} from "sonner";
+import {formatLaravelErrors} from "@/utils/formatLaravelErrors";
 
 export default function Page() {
-    const { data: users, loading, error, deleteUser, editUser, addUser } = useUsers();
-
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const {updateUser, createUser, getUsers} = useUsers();
     const [isFormSheetOpen, setIsFormSheetOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     // Open form sheet for add or edit
-    function handleEdit(user?: User) {
+    const handleEdit = (user?: User) => {
         setSelectedUser(user || null);
         setIsFormSheetOpen(true);
     }
-
-    if (loading) return <p>Loading users...</p>;
-    if (error) return <p className="text-red-500">{error}</p>;
 
     return (
         <div className="flex flex-col p-4 min-h-min flex-1">
@@ -39,11 +37,7 @@ export default function Page() {
                 </Button>
             </div>
 
-            <UsersTable
-                users={users}
-                onEdit={handleEdit}
-                onDelete={deleteUser}
-            />
+            <UsersTable onEdit={handleEdit} />
 
             <UserFormSheet
                 user={selectedUser || undefined}
@@ -51,9 +45,32 @@ export default function Page() {
                 onClose={setIsFormSheetOpen}
                 onSave={(savedUser) => {
                     if (typeof savedUser === 'object' && savedUser.id) {
-                        editUser(savedUser.id, savedUser);
+                        updateUser(savedUser.id, savedUser)
+                            .then(() => {
+                                toast.success("User updated successfully.");
+                            }).catch(err => {
+                            toast.error(err.message);
+                        });
                     } else {
-                        addUser(savedUser);
+                        createUser(savedUser).then(
+                            () => {
+                                setIsFormSheetOpen(false);
+                                toast.success("User created successfully.");
+                                getUsers().catch((error: any) => {
+                                    const messages: string[] = error.message?.split("\n") ?? ["Failed to fetch users!"];
+                                    toast.error("Failed to fetch users", {
+                                            description: formatLaravelErrors(messages),
+                                        }
+                                    );
+                                });
+                            }
+                        ).catch((error: any) => {
+                            const messages: string[] = error.message?.split("\n") ?? ["Failed to create user!"];
+                            toast.error("Failed to create user", {
+                                    description: formatLaravelErrors(messages),
+                                }
+                            );
+                        });
                     }
                 }}
             />

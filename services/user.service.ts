@@ -1,9 +1,9 @@
 import { API_BASE } from "@/lib/env";
 import { ensureCsrf } from "@/lib/csrf";
 import { getCookie } from "@/lib/cookies";
-import {User} from "@/types/user";
+import {User, UserPayload} from "@/types/user";
 
-async function getAllUsers(): Promise<User[]> {
+async function getUsers(): Promise<User[]> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
     const res = await fetch(`${API_BASE}/api/users`, {
@@ -17,21 +17,40 @@ async function getAllUsers(): Promise<User[]> {
         },
     });
 
-    if (!res.ok) throw new Error("Failed to fetch users");
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to get users list`);
+        }
+        throw errorData;
+    }
     const json: any = await res.json();
     return Array.isArray(json?.data) ? json.data : [];
 }
 
-async function getUserById(id: string): Promise<User> {
-    const res = await fetch(`${API_BASE}/api/users/${id}`, {
-        credentials: "include",
-    });
-    if (!res.ok) throw new Error(`Failed to fetch user with id ${id}`);
+async function getUser(id: string): Promise<User> {
+    const res = await fetch(
+        `${API_BASE}/api/users/${id}`,
+        {credentials: "include"}
+    );
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to get user`);
+        }
+        throw errorData;
+    }
+
     const json: any = await res.json();
     return json.data;
 }
 
-async function createUser(user: User): Promise<User> {
+async function createUser(user: UserPayload): Promise<User> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
     const res = await fetch(`${API_BASE}/api/users`, {
@@ -45,12 +64,22 @@ async function createUser(user: User): Promise<User> {
         },
         body: JSON.stringify(user),
     });
-    if (!res.ok) throw new Error("Failed to create user");
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to create user`);
+        }
+        throw errorData;
+    }
+
     const json = await res.json();
     return json.data;
 }
 
-async function editUser(id: string, user: User): Promise<User> {
+async function updateUser(id: string, user: UserPayload): Promise<User> {
     await ensureCsrf();
     const xsrf = getCookie("XSRF-TOKEN") || "";
     const res = await fetch(`${API_BASE}/api/users/${id}`, {
@@ -64,7 +93,17 @@ async function editUser(id: string, user: User): Promise<User> {
         },
         body: JSON.stringify(user),
     });
-    if (!res.ok) throw new Error(`Failed to update user with id ${id}`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to update user`);
+        }
+        throw errorData;
+    }
+
     const json = await res.json();
     return json.data;
 }
@@ -82,7 +121,16 @@ async function deleteUser(id: string): Promise<void> {
             "X-XSRF-TOKEN": xsrf,
         },
     });
-    if (!res.ok) throw new Error(`Failed to delete user with id ${id}`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to delete user`);
+        }
+        throw errorData;
+    }
 }
 
 async function updateMyProfile(user: User): Promise<User> {
@@ -99,16 +147,26 @@ async function updateMyProfile(user: User): Promise<User> {
         },
         body: JSON.stringify(user),
     });
-    if (!res.ok) throw new Error(`Failed to update mu profile`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to update profile`);
+        }
+        throw errorData;
+    }
+
     const json = await res.json();
     return json.data;
 }
 
 export const userService = {
-    getAllUsers,
-    getUserById,
+    getUser,
+    getUsers,
     createUser,
-    editUser,
+    updateUser,
     deleteUser,
     updateMyProfile,
 };

@@ -1,60 +1,113 @@
 "use client";
-import {useEffect, useState} from "react";
-import {toast} from "sonner";
-import {User} from "@/types/user";
+import {useState} from "react";
+import {User, UserPayload} from "@/types/user";
 import {userService} from "@/services/user.service";
 
 export function useUsers() {
-    const [data, setData] = useState<User[]>([]);
+    const [user, setUser] = useState<User | null>(null);
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchAll();
-    }, []);
-
-    async function fetchAll() {
+    const getUser = async (id: string) => {
         try {
             setLoading(true);
-            const users = await userService.getAllUsers();
-            setData(users);
-            setError(null);
-        } catch {
-            setError("Failed to fetch users.");
+            const user = await userService.getUser(id);
+            setUser(user);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to get user");
         } finally {
             setLoading(false);
         }
     }
 
-    async function addUser(newUser: User) {
+    const getUsers = async () => {
         try {
-            const user = await userService.createUser(newUser);
-            setData((prev) => [...prev, user]);
-            toast("User added successfully!");
-        } catch {
-            toast("Failed to add user.");
+            setLoading(true);
+            const users = await userService.getUsers();
+            setUsers(users);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to get users list");
+        } finally {
+            setLoading(false);
         }
     }
 
-    async function editUser(id: string, updatedUser: User) {
+    const createUser = async (user: UserPayload): Promise<User> => {
         try {
-            const updated = await userService.editUser(id, updatedUser);
-            setData((prev) =>
-                prev.map((user) => (user.id === id ? { ...user, ...updated } : user))
-            );
-            toast("Category updated successfully!");
-        } catch {
-            toast("Failed to update category.");        }
+            setLoading(true);
+            return await userService.createUser(user);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to create user");
+        } finally {
+            setLoading(false);
+        }
     }
 
-    async function deleteUser(id: string) {
+    const updateUser = async (id: string, user: UserPayload) => {
+        try {
+            setLoading(true);
+            await userService.updateUser(id, user);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to update user");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteUser = async (id: string) => {
         if (!confirm("Are you sure you want to delete this user?")) return;
         try {
+            setLoading(true);
             await userService.deleteUser(id);
-            setData((prev) => prev.filter((user) => user.id !== id));
-            toast("User deleted successfully!");
-        } catch {
-            toast("Failed to delete user.");
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to delete user");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -62,24 +115,31 @@ export function useUsers() {
         try {
             setLoading(true);
             await userService.updateMyProfile(updatedUser);
-        } catch {
-            toast("Failed to update category.");
-        } finally {
-            setLoading(false);
-            toast("Profile updated successfully!");
-        }
-    }
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
 
-    async function getUser(id: string) {
-        try {
-            setLoading(true);
-            return await userService.getUserById(id);
-        } catch {
-            setError("Failed to fetch user.");
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to update profile");
         } finally {
             setLoading(false);
         }
     }
 
-    return { data, loading, error, addUser, editUser, deleteUser, getUser, updateMyProfile };
+    return {
+        user,
+        users,
+        loading,
+        getUser,
+        getUsers,
+        createUser,
+        updateUser,
+        deleteUser,
+        updateMyProfile
+    };
 }
