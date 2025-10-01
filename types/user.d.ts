@@ -1,5 +1,5 @@
 export interface User {
-    id: string,
+    id?: string,
     name: string,
     email: string,
     avatar?: string,
@@ -7,6 +7,7 @@ export interface User {
 }
 
 export interface UserPayload {
+    id?: string,
     name: string,
     email: string,
     avatar?: string,
