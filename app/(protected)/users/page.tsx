@@ -12,7 +12,7 @@ import {formatLaravelErrors} from "@/utils/formatLaravelErrors";
 import {UserFromValues} from "@/validations/user.schema";
 
 export default function Page() {
-    const {updateUser, createUser, getUsers} = useUsers();
+    const {updateUser, createUser} = useUsers();
     const [isFormSheetOpen, setIsFormSheetOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
