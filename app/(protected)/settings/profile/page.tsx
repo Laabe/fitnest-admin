@@ -13,7 +13,6 @@ export default function Page() {
         <div className="flex flex-col p-4 min-h-min flex-1">
             <h1 className="text-2xl font-bold tracking-tight">Profile Settings</h1>
             <p className="text-muted-foreground">Manage your profile settings</p>
-            {/* Add your profile settings components here */}
 
             <Card className="w-full max-w-2xl mt-4">
                 <CardContent>

@@ -14,9 +14,10 @@ import {User} from "@/types/user";
 
 interface UserTableProps {
     onEdit: (user: User) => void;
+    refreshTrigger?: number;
 }
 
-export default function UsersTable({onEdit}: UserTableProps) {
+export default function UsersTable({onEdit, refreshTrigger}: UserTableProps) {
     const {users, getUsers, deleteUser} = useUsers();
 
     useEffect(() => {
@@ -27,7 +28,7 @@ export default function UsersTable({onEdit}: UserTableProps) {
                 }
             );
         });
-    }, []);
+    }, [refreshTrigger]);
 
     const handleDelete = async (id: string) => {
         deleteUser(id)

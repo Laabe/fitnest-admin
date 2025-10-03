@@ -11,6 +11,8 @@ import { useUsers } from "@/hooks/useUsers";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/form-field";
 import { Input } from "@/components/ui/input";
+import {toast} from "sonner";
+import {formatLaravelErrors} from "@/utils/formatLaravelErrors";
 
 interface IProps {
     user: User | null;
@@ -30,11 +32,19 @@ export function ProfileSettingsForm({ user }: IProps) {
         },
     });
 
-    const { updateMyProfile, loading } = useUsers();
+    let { updateMyProfile, loading } = useUsers();
 
     const onSave = (data: ProfileSettingsFormValues) => {
         if (!user?.id) return;
-        updateMyProfile({ ...user, ...data });
+        updateMyProfile({...user, ...data}).then(() => {
+            toast.success("Profile saved successfully");
+        }).catch((error: any) => {
+            const messages: string[] = error.message?.split("\n") ?? ["Failed to save profile"];
+            toast.error("Failed to save profile", {
+                    description: formatLaravelErrors(messages),
+                }
+            );
+        });
     };
 
     return (
