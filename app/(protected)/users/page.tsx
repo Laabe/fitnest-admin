@@ -9,11 +9,13 @@ import UsersTable from "@/app/(protected)/users/components/users-table";
 import {UserFormSheet} from "@/app/(protected)/users/components/user-form-sheet";
 import {toast} from "sonner";
 import {formatLaravelErrors} from "@/utils/formatLaravelErrors";
+import {UserFromValues} from "@/validations/user.schema";
 
 export default function Page() {
     const {updateUser, createUser, getUsers} = useUsers();
     const [isFormSheetOpen, setIsFormSheetOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     // Open form sheet for add or edit
     const handleEdit = (user?: User) => {
@@ -37,40 +39,35 @@ export default function Page() {
                 </Button>
             </div>
 
-            <UsersTable onEdit={handleEdit} />
+            <UsersTable onEdit={handleEdit} refreshTrigger={refreshTrigger} />
 
             <UserFormSheet
                 user={selectedUser || undefined}
                 open={isFormSheetOpen}
                 onClose={setIsFormSheetOpen}
-                onSave={(savedUser) => {
-                    if (typeof savedUser === 'object' && savedUser.id) {
-                        updateUser(savedUser.id, savedUser)
+                onSave={async (savedUser) => {
+                    if ("id" in savedUser && savedUser.id) {
+                        return updateUser(savedUser.id, savedUser)
                             .then(() => {
                                 toast.success("User updated successfully.");
-                            }).catch(err => {
-                            toast.error(err.message);
-                        });
-                    } else {
-                        createUser(savedUser).then(
-                            () => {
                                 setIsFormSheetOpen(false);
+                                setRefreshTrigger((prev) => prev + 1);
+                            })
+                            .catch((err) => {
+                                toast.error(err.message);
+                            });
+                    } else {
+                        return createUser(savedUser as UserFromValues)
+                            .then(() => {
                                 toast.success("User created successfully.");
-                                getUsers().catch((error: any) => {
-                                    const messages: string[] = error.message?.split("\n") ?? ["Failed to fetch users!"];
-                                    toast.error("Failed to fetch users", {
-                                            description: formatLaravelErrors(messages),
-                                        }
-                                    );
-                                });
-                            }
-                        ).catch((error: any) => {
-                            const messages: string[] = error.message?.split("\n") ?? ["Failed to create user!"];
-                            toast.error("Failed to create user", {
+                                setRefreshTrigger((prev) => prev + 1);
+                            })
+                            .catch((error: any) => {
+                                const messages: string[] = error.message?.split("\n") ?? ["Failed to create user!"];
+                                toast.error("Failed to create user", {
                                     description: formatLaravelErrors(messages),
-                                }
-                            );
-                        });
+                                });
+                            });
                     }
                 }}
             />
