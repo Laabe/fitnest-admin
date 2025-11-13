@@ -1,19 +1,14 @@
 import {API_BASE} from "@/lib/env";
-import {ensureCsrf} from "@/lib/csrf";
-import {getCookie} from "@/lib/cookies";
 import {Product, ProductPayload} from "@/types/product";
+import {storage} from "@/lib/storage";
 
 async function getProducts(): Promise<Product[]> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/products`, {
+    const res = await fetch(`${API_BASE}/products`, {
         method: "GET",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
 
@@ -31,10 +26,14 @@ async function getProducts(): Promise<Product[]> {
 }
 
 async function getProduct(id: string): Promise<Product> {
-    const res = await fetch(
-        `${API_BASE}/api/products/${id}`,
-        {credentials: "include"}
-    );
+    const res = await fetch(`${API_BASE}/products/${id}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${storage.getToken()}`,
+        },
+    });
 
     if (!res.ok) {
         let errorData: any;
@@ -51,16 +50,12 @@ async function getProduct(id: string): Promise<Product> {
 }
 
 async function createProduct(product: ProductPayload): Promise<Product> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/products`, {
+    const res = await fetch(`${API_BASE}/products`, {
         method: "POST",
-        credentials: "include", // ✅ important
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(product),
     });
@@ -80,16 +75,13 @@ async function createProduct(product: ProductPayload): Promise<Product> {
 }
 
 async function updateProduct(id: string, product: ProductPayload): Promise<Product> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/products/${id}`, {
+    const res = await fetch(`${API_BASE}/products/${id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(product),
     });
@@ -109,16 +101,13 @@ async function updateProduct(id: string, product: ProductPayload): Promise<Produ
 }
 
 async function deleteProduct(id: string): Promise<void> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/products/${id}`, {
+    const res = await fetch(`${API_BASE}/products/${id}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
 

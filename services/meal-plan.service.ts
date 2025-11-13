@@ -1,20 +1,15 @@
 import { API_BASE } from "@/lib/env";
-import { ensureCsrf } from "@/lib/csrf";
-import { getCookie } from "@/lib/cookies";
 import { MealPlan } from "@/types/meal-plan";
 import {MealPlanFormValues} from "@/validations/meal-plan.schema";
+import {storage} from "@/lib/storage";
 
 async function getAllPlans(): Promise<MealPlan[]> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meal-plans`, {
+    const res = await fetch(`${API_BASE}/meal-plans`, {
         method: "GET",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
 
@@ -24,8 +19,13 @@ async function getAllPlans(): Promise<MealPlan[]> {
 }
 
 async function getMealPlanById(id: string): Promise<MealPlan> {
-    const res = await fetch(`${API_BASE}/api/meal-plans/${id}`, {
-        credentials: "include",
+    const res = await fetch(`${API_BASE}/meal-plans/${id}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${storage.getToken()}`,
+        },
     });
     if (!res.ok) throw new Error(`Failed to fetch meal plan with id ${id}`);
     const json: any = await res.json();
@@ -33,16 +33,13 @@ async function getMealPlanById(id: string): Promise<MealPlan> {
 }
 
 async function createMealPlan(mealPlan: MealPlanFormValues): Promise<MealPlan> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meal-plans`, {
+    const res = await fetch(`${API_BASE}/meal-plans`, {
         method: "POST",
-        credentials: "include", // ✅ important
+        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(mealPlan),
     });
@@ -52,16 +49,13 @@ async function createMealPlan(mealPlan: MealPlanFormValues): Promise<MealPlan> {
 }
 
 async function editMealPlan(id: string, mealPlan: MealPlan): Promise<MealPlan> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meal-plans/${id}`, {
+    const res = await fetch(`${API_BASE}/meal-plans/${id}`, {
         method: "PUT",
-        credentials: "include", // ✅ important
+        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(mealPlan),
     });
@@ -71,16 +65,13 @@ async function editMealPlan(id: string, mealPlan: MealPlan): Promise<MealPlan> {
 }
 
 async function deleteMealPlan(id: string): Promise<void> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/meal-plans/${id}`, {
+    const res = await fetch(`${API_BASE}/meal-plans/${id}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
     if (!res.ok) throw new Error(`Failed to delete meal plan with id ${id}`);
