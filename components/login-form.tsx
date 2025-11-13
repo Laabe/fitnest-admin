@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {Form, FormControl, FormField, FormItem, FormLabel} from '@/components/ui/form';
 import {LoginSchema, LoginValues} from "@/validations/login.schema";
-import {bootstrapUser, login} from "@/services/auth.service";
+import {login} from "@/services/auth.service";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -37,7 +37,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
       return;
     }
 
-    await bootstrapUser();
     window.location.href = '/dashboard';
   }
 
