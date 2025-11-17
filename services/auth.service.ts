@@ -4,7 +4,7 @@ import {storage} from "@/lib/storage";
 
 
 export async function login(values: LoginValues) {
-    const res = await fetch(`${API_BASE}/login`, {
+    const res = await fetch(`${API_BASE}/api/login`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -23,7 +23,7 @@ export async function login(values: LoginValues) {
 }
 
 export async function logout(): Promise<boolean> {
-    const res = await fetch(`${API_BASE}/logout`, {
+    const res = await fetch(`${API_BASE}/api/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {
