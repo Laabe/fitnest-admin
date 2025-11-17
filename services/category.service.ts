@@ -1,19 +1,14 @@
 import { API_BASE } from "@/lib/env";
-import { ensureCsrf } from "@/lib/csrf";
-import { getCookie } from "@/lib/cookies";
 import {Category} from "@/types/category";
+import {storage} from "@/lib/storage";
 
 async function getAllCategories(): Promise<Category[]> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/categories`, {
+    const res = await fetch(`${API_BASE}/categories`, {
         method: "GET",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
 
@@ -23,8 +18,13 @@ async function getAllCategories(): Promise<Category[]> {
 }
 
 async function getCategoryById(id: string): Promise<Category> {
-    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
-        credentials: "include",
+    const res = await fetch(`${API_BASE}/categories/${id}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${storage.getToken()}`,
+        },
     });
     if (!res.ok) throw new Error(`Failed to fetch category with id ${id}`);
     const json: any = await res.json();
@@ -32,16 +32,12 @@ async function getCategoryById(id: string): Promise<Category> {
 }
 
 async function createCategory(category: Category): Promise<Category> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/categories`, {
+    const res = await fetch(`${API_BASE}/categories`, {
         method: "POST",
-        credentials: "include", // ✅ important
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(category),
     });
@@ -51,16 +47,12 @@ async function createCategory(category: Category): Promise<Category> {
 }
 
 async function editCategory(id: string, category: Category): Promise<Category> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/categories/${id}`, {
         method: "PUT",
-        credentials: "include", // ✅ important
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(category),
     });
@@ -70,16 +62,12 @@ async function editCategory(id: string, category: Category): Promise<Category> {
 }
 
 async function deleteCategory(id: string): Promise<void> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/categories/${id}`, {
         method: "DELETE",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`
         },
     });
     if (!res.ok) throw new Error(`Failed to delete category with id ${id}`);

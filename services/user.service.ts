@@ -1,19 +1,14 @@
 import { API_BASE } from "@/lib/env";
-import { ensureCsrf } from "@/lib/csrf";
-import { getCookie } from "@/lib/cookies";
 import {User, UserPayload} from "@/types/user";
+import {storage} from "@/lib/storage";
 
 async function getUsers(): Promise<User[]> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/users`, {
+    const res = await fetch(`${API_BASE}/users`, {
         method: "GET",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
 
@@ -31,10 +26,14 @@ async function getUsers(): Promise<User[]> {
 }
 
 async function getUser(id: string): Promise<User> {
-    const res = await fetch(
-        `${API_BASE}/api/users/${id}`,
-        {credentials: "include"}
-    );
+    const res = await fetch(`${API_BASE}/users/${id}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${storage.getToken()}`,
+        },
+    });
 
     if (!res.ok) {
         let errorData: any;
@@ -51,16 +50,12 @@ async function getUser(id: string): Promise<User> {
 }
 
 async function createUser(user: UserPayload): Promise<User> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/users`, {
+    const res = await fetch(`${API_BASE}/users`, {
         method: "POST",
-        credentials: "include", // ✅ important
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(user),
     });
@@ -80,16 +75,12 @@ async function createUser(user: UserPayload): Promise<User> {
 }
 
 async function updateUser(id: string, user: UserPayload): Promise<User> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/users/${id}`, {
+    const res = await fetch(`${API_BASE}/users/${id}`, {
         method: "PUT",
-        credentials: "include", // ✅ important
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(user),
     });
@@ -109,16 +100,12 @@ async function updateUser(id: string, user: UserPayload): Promise<User> {
 }
 
 async function deleteUser(id: string): Promise<void> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/users/${id}`, {
+    const res = await fetch(`${API_BASE}/users/${id}`, {
         method: "DELETE",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
 
@@ -134,16 +121,12 @@ async function deleteUser(id: string): Promise<void> {
 }
 
 async function updateMyProfile(user: User): Promise<User> {
-    await ensureCsrf();
-    const xsrf = getCookie("XSRF-TOKEN") || "";
-    const res = await fetch(`${API_BASE}/api/settings/profile`, {
+    const res = await fetch(`${API_BASE}/settings/profile`, {
         method: "PUT",
-        credentials: "include", // ✅ important
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-XSRF-TOKEN": xsrf,
+            "Authorization": `Bearer ${storage.getToken()}`,
         },
         body: JSON.stringify(user),
     });
