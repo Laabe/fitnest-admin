@@ -1,6 +1,7 @@
-import type {Metadata} from "next";
+"use client";
+
 import {Geist, Geist_Mono} from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import React from "react";
 import {AppSidebar} from "@/components/app-sidebar";
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
@@ -13,6 +14,7 @@ import {
     BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
 import {Toaster} from "@/components/ui/sonner";
+import {useAuthRedirect} from "@/hooks/useAuthRedirect";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -24,14 +26,11 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-    title: "Fitnest",
-    description: "A fitness app for tracking your workouts and nutrition",
-};
-
 export default function RootLayout({
     children
 }: Readonly<{ children: React.ReactNode; }>) {
+    useAuthRedirect();
+
     return (
         <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} >

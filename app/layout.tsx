@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+'use client';
+
+import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import React from "react";
+import {useAuthRedirect} from "@/hooks/useAuthRedirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,23 +15,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Fitnest",
-  description: "A fitness app for tracking your workouts and nutrition",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+export default function RootLayout(
+    {children}: Readonly<{ children: React.ReactNode; }>
+) {
+    useAuthRedirect();
+    return (
+        <html lang="en">
+        <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
         {children}
-      </body>
-    </html>
-  );
+        </body>
+        </html>
+    );
 }

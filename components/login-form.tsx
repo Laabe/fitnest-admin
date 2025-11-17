@@ -29,8 +29,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         setFormError(payload.message || 'Please fix the errors below.');
       } else if (status === 401) {
         setFormError(payload?.message || 'Invalid credentials.');
-      } else if (status === 419) {
-        setFormError('Session/CSRF mismatch. Please refresh and try again.');
       } else {
         setFormError(payload?.message || 'Login failed.');
       }
