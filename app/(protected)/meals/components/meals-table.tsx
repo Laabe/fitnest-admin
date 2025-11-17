@@ -34,7 +34,7 @@ export default function MealsTable({ meals, onView, onEdit, onDelete }: MealsTab
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => onView(meal)}>View</DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => onEdit(meal)}>Edit</DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-500" onClick={() => onDelete(meal.id)}>Delete</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onDelete(meal.id)}>Delete</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         );
