@@ -20,7 +20,6 @@ export function MealFormSheet({ meal, open, onClose, onSave }: MealFormSheetProp
         setLoading(true);
         setError(null);
         try {
-            // call parent onSave
             if (onSave) onSave(data);
             onClose(false);
         } catch (err) {
