@@ -1,5 +1,3 @@
-type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
-
 export interface Meal {
     id?: string,
     name: string,
@@ -9,5 +7,4 @@ export interface Meal {
     carbohydrates: number,
     fats: number,
     image?: string,
-    meal_type: MealType,
 }
