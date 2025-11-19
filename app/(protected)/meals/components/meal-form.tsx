@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, {useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Meal } from "@/types/meal";
@@ -10,6 +10,7 @@ import { FormField } from "@/components/form-field";
 import { Textarea } from "@/components/ui/textarea";
 import { MealFormValues, mealSchema } from "@/validations/meal.schema";
 import {Dropzone} from "@/components/dropzone";
+import {generateSKU} from "@/lib/utils";
 
 interface MealFormProps {
     defaultValues?: Meal;
@@ -19,7 +20,9 @@ interface MealFormProps {
 
 export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
     const {
+        watch,
         register,
+        setValue,
         handleSubmit,
         formState: { errors },
     } = useForm<MealFormValues>({
@@ -36,6 +39,14 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
         },
     });
 
+    useEffect(() => {
+        const mealName = watch("name");
+        if (mealName) {
+            const generatedSKU = generateSKU(mealName);
+            setValue('sku', generatedSKU)
+        }
+    })
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4">
             <FormField id="name" label="Name" error={errors.name?.message}>
@@ -43,7 +54,7 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
             </FormField>
 
             <FormField id="sku" label="SKU" error={errors.sku?.message}>
-                <Input {...register("sku")} />
+                <Input {...register("sku")} readOnly={true} />
             </FormField>
 
             <FormField id="description" label="Description" error={errors.description?.message}>
@@ -52,19 +63,19 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
 
             <div className="grid grid-cols-2 gap-4">
                 <FormField id="calories" label="Calories" error={errors.calories?.message}>
-                    <Input type="number" {...register("calories", { valueAsNumber: true })} />
+                    <Input {...register("calories", { valueAsNumber: true })} />
                 </FormField>
 
                 <FormField id="protein" label="Protein (g)" error={errors.protein?.message}>
-                    <Input type="number" {...register("protein", { valueAsNumber: true })} />
+                    <Input {...register("protein", { valueAsNumber: true })} />
                 </FormField>
 
                 <FormField id="carbohydrates" label="Carbs (g)" error={errors.carbohydrates?.message}>
-                    <Input type="number" {...register("carbohydrates", { valueAsNumber: true })} />
+                    <Input {...register("carbohydrates", { valueAsNumber: true })} />
                 </FormField>
 
                 <FormField id="fats" label="Fats (g)" error={errors.fats?.message}>
-                    <Input type="number" {...register("fats", { valueAsNumber: true })} />
+                    <Input {...register("fats", { valueAsNumber: true })} />
                 </FormField>
             </div>
 

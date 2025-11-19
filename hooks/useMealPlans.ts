@@ -1,14 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { MealPlan } from "@/types/meal-plan";
 import { mealPlanService } from "@/services/meal-plan.service";
 import {MealPlanFormValues} from "@/validations/meal-plan.schema";
 
 
 export function useMealPlans() {
-    const [data, setData] = useState<MealPlan[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -16,7 +15,7 @@ export function useMealPlans() {
             try {
                 setLoading(true);
                 const mealPlans = await mealPlanService.getAllPlans();
-                setData(mealPlans);
+                setMealPlans(mealPlans);
                 setError(null);
             } catch {
                 setError("Failed to fetch meal plans");
@@ -27,37 +26,66 @@ export function useMealPlans() {
         fetchAll();
     }, []);
 
-    async function addMealPlan(newMealPlan: MealPlanFormValues) {
+    async function addMealPlan(mealPlan: MealPlanFormValues) {
+        setLoading(true);
         try {
-            const createdMealPlan = await mealPlanService.createMealPlan(newMealPlan);
-            setData((prev) => [...prev, createdMealPlan]);
-            toast("Meal plan added successfully!");
-        } catch {
-            toast("Failed to add meal plan.");
+            return await mealPlanService.createMealPlan(mealPlan);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to create meal plan");
+        } finally {
+            setLoading(false);
         }
     }
 
-    async function editMealPlan(id: string, updatedMealPlan: MealPlan) {
+    async function editMealPlan(id: string, mealPlan: Partial<MealPlanFormValues>) {
         try {
-            const updated = await mealPlanService.editMealPlan(id, updatedMealPlan);
-            setData((prev) =>
-                prev.map((mealPlan) => (mealPlan.id === id ? { ...mealPlan, ...updated } : mealPlan))
-            );
-            toast("Meal plan updated successfully!");
-        } catch {
-            toast("Failed to update category.");        }
+            setLoading(true);
+            return await mealPlanService.editMealPlan(id, mealPlan);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+            throw new Error("Failed to update meal plan");
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function deleteMealPlan(id: string) {
         if (!confirm("Are you sure you want to delete this meal plan?")) return;
         try {
+            setLoading(true);
+            setMealPlans((prev) => prev.filter((mealPlan) => mealPlan.id !== id));
             await mealPlanService.deleteMealPlan(id);
-            setData((prev) => prev.filter((mealPlan) => mealPlan.id !== id));
-            toast("Meal plan deleted successfully!");
-        } catch {
-            toast("Failed to delete meal plan.");
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to delete meal plan");
+        } finally {
+            setLoading(false);
         }
     }
 
-    return { data, loading, error, addMealPlan, editMealPlan, deleteMealPlan };
+    return {mealPlans, loading, error, addMealPlan, editMealPlan, deleteMealPlan};
 }

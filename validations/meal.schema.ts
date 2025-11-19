@@ -1,4 +1,4 @@
-import { z } from "zod";
+import {z} from "zod";
 
 export const mealSchema = z.object({
     id: z.string().optional(),
@@ -15,9 +15,9 @@ export const mealSchema = z.object({
         .transform((val) => (val === "" ? undefined : val))
         .optional()
         .refine((val) => !val || /^https?:\/\/.+$/.test(val), {
-            message: "Image must be a valid URL",
-        }),
-
+                message: "Image must be a valid URL",
+            }
+        ),
 });
 
 export type MealFormValues = z.infer<typeof mealSchema>;

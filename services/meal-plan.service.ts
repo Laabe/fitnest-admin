@@ -13,7 +13,15 @@ async function getAllPlans(): Promise<MealPlan[]> {
         },
     });
 
-    if (!res.ok) throw new Error("Failed to fetch meal plans");
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to get meal plan list`);
+        }
+        throw errorData;
+    }
     const json: any = await res.json();
     return Array.isArray(json?.data) ? json.data : [];
 }
@@ -27,7 +35,17 @@ async function getMealPlanById(id: string): Promise<MealPlan> {
             "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
-    if (!res.ok) throw new Error(`Failed to fetch meal plan with id ${id}`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to get meal plan`);
+        }
+        throw errorData;
+    }
+
     const json: any = await res.json();
     return json.data;
 }
@@ -35,7 +53,6 @@ async function getMealPlanById(id: string): Promise<MealPlan> {
 async function createMealPlan(mealPlan: MealPlanFormValues): Promise<MealPlan> {
     const res = await fetch(`${API_BASE}/api/meal-plans`, {
         method: "POST",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -43,15 +60,24 @@ async function createMealPlan(mealPlan: MealPlanFormValues): Promise<MealPlan> {
         },
         body: JSON.stringify(mealPlan),
     });
-    if (!res.ok) throw new Error("Failed to create meal plan");
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to create meal plan`);
+        }
+        throw errorData;
+    }
+
     const json = await res.json();
     return json.data;
 }
 
-async function editMealPlan(id: string, mealPlan: MealPlan): Promise<MealPlan> {
+async function editMealPlan(id: string, mealPlan: Partial<MealPlanFormValues>): Promise<MealPlan> {
     const res = await fetch(`${API_BASE}/api/meal-plans/${id}`, {
         method: "PUT",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -59,7 +85,17 @@ async function editMealPlan(id: string, mealPlan: MealPlan): Promise<MealPlan> {
         },
         body: JSON.stringify(mealPlan),
     });
-    if (!res.ok) throw new Error(`Failed to update meal plan with id ${id}`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to update meal plan`);
+        }
+        throw errorData;
+    }
+
     const json = await res.json();
     return json.data;
 }
@@ -67,14 +103,22 @@ async function editMealPlan(id: string, mealPlan: MealPlan): Promise<MealPlan> {
 async function deleteMealPlan(id: string): Promise<void> {
     const res = await fetch(`${API_BASE}/api/meal-plans/${id}`, {
         method: "DELETE",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
             "Authorization": `Bearer ${storage.getToken()}`,
         },
     });
-    if (!res.ok) throw new Error(`Failed to delete meal plan with id ${id}`);
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to delete meal plan`);
+        }
+        throw errorData;
+    }
 }
 
 export const mealPlanService = {
