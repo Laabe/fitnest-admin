@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, {useEffect} from "react"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
@@ -15,6 +15,7 @@ import {Dropzone} from "@/components/dropzone";
 import {toast} from "sonner";
 import {formatLaravelErrors} from "@/utils/formatLaravelErrors";
 import {useRouter} from "next/navigation";
+import {generateSKU} from "@/lib/utils";
 
 interface MealPlanFormProps {
     defaultValues?: MealPlanFormValues
@@ -25,13 +26,23 @@ export function MealPlanForm({defaultValues}: MealPlanFormProps) {
     const {addMealPlan, loading} = useMealPlans();
 
     const {
+        watch,
         register,
+        setValue,
         handleSubmit,
         formState: {errors},
     } = useForm<MealPlanFormValues>({
         resolver: zodResolver(mealPlanSchema),
         mode: "onChange",
         defaultValues: defaultValues,
+    })
+
+    useEffect(() => {
+        const mealPlanName = watch("name");
+        if (mealPlanName) {
+            const generatedSKU = generateSKU(mealPlanName);
+            setValue('sku', generatedSKU)
+        }
     })
 
     const onSubmit = async (data: MealPlanFormValues) => {
@@ -69,7 +80,7 @@ export function MealPlanForm({defaultValues}: MealPlanFormProps) {
 
                                 <FormField id="sku" label="SKU" error={errors.sku?.message}>
                                     <Input placeholder="e.g., SKU-####-####"
-                                           className="h-12 text-base" {...register("sku")} />
+                                           className="h-12 text-base" {...register("sku")} readOnly={true} />
                                 </FormField>
 
                                 <FormField id="description" label="Description" error={errors.description?.message}>
