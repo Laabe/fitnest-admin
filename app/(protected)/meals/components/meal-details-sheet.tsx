@@ -1,9 +1,7 @@
 "use client";
 
-import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription} from "@/components/ui/sheet";
-import {Card, CardContent} from "@/components/ui/card";
+import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {Meal} from "@/types/meal";
-import Image from "next/image";
 
 interface MealDetailsSheetProps {
     meal: Meal | null;
@@ -23,8 +21,8 @@ export default function MealDetailsSheet({meal, open, onClose}: MealDetailsSheet
                     <div className="gap-1.5 p-4 overflow-y-auto">
                         <div className="aspect-video w-full overflow-hidden rounded-lg mb-4">
                             <img
-                                src={meal.image || ""}
-                                alt="Egg and Avocado Toast"
+                                src={meal?.image}
+                                alt={meal.name}
                                 className="h-full w-full object-cover"/>
                         </div>
                         <div className="grid grid-cols-4 gap-2 mb-6">
