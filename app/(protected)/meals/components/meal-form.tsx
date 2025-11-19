@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, {useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Meal } from "@/types/meal";
@@ -10,6 +10,7 @@ import { FormField } from "@/components/form-field";
 import { Textarea } from "@/components/ui/textarea";
 import { MealFormValues, mealSchema } from "@/validations/meal.schema";
 import {Dropzone} from "@/components/dropzone";
+import {generateSKU} from "@/lib/utils";
 
 interface MealFormProps {
     defaultValues?: Meal;
@@ -19,7 +20,9 @@ interface MealFormProps {
 
 export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
     const {
+        watch,
         register,
+        setValue,
         handleSubmit,
         formState: { errors },
     } = useForm<MealFormValues>({
@@ -35,6 +38,14 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
             image: "",
         },
     });
+
+    useEffect(() => {
+        const mealName = watch("name");
+        if (mealName) {
+            const generatedSKU = generateSKU(mealName);
+            setValue('sku', generatedSKU)
+        }
+    })
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4">
