@@ -75,10 +75,9 @@ async function createMealPlan(mealPlan: MealPlanFormValues): Promise<MealPlan> {
     return json.data;
 }
 
-async function editMealPlan(id: string, mealPlan: MealPlan): Promise<MealPlan> {
+async function editMealPlan(id: string, mealPlan: Partial<MealPlanFormValues>): Promise<MealPlan> {
     const res = await fetch(`${API_BASE}/api/meal-plans/${id}`, {
         method: "PUT",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -104,7 +103,6 @@ async function editMealPlan(id: string, mealPlan: MealPlan): Promise<MealPlan> {
 async function deleteMealPlan(id: string): Promise<void> {
     const res = await fetch(`${API_BASE}/api/meal-plans/${id}`, {
         method: "DELETE",
-        credentials: "include",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
