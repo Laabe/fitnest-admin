@@ -5,7 +5,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { FormField } from "@/components/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ProductImageDropzone } from "@/components/image-dropzone";
+import {Dropzone } from "@/components/dropzone";
 import { Combobox } from "@/components/combobox";
 import { ProductVariants } from "@/app/(protected)/products/components/product-variants-form";
 import { Button } from "@/components/ui/button";
@@ -120,7 +120,7 @@ export function ProductForm({
                             <Card>
                                 <CardTitle className="px-5">Product Images</CardTitle>
                                 <CardContent>
-                                    <ProductImageDropzone />
+                                    <Dropzone multiple={true}/>
                                 </CardContent>
                             </Card>
                             <Card>

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/form-field";
 import { Textarea } from "@/components/ui/textarea";
 import { MealFormValues, mealSchema } from "@/validations/meal.schema";
+import {Dropzone} from "@/components/dropzone";
 
 interface MealFormProps {
     defaultValues?: Meal;
@@ -68,7 +69,7 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
             </div>
 
             <FormField id="image" label="Image URL" error={errors.image?.message}>
-                <Input {...register("image")} />
+                <Dropzone multiple={false} />
             </FormField>
 
             <Button type="submit" disabled={loading}>
