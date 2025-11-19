@@ -7,7 +7,7 @@ import MealPlanTable from "@/app/(protected)/meal-plans/components/meal-plans-ta
 import Link from "next/link";
 
 export default function Page() {
-    const { data: mealPlans, loading, error, deleteMealPlan } = useMealPlans();
+    const { mealPlans, loading, error, deleteMealPlan } = useMealPlans();
 
     if (loading) return <p>Loading categories...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
