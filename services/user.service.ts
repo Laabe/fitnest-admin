@@ -3,7 +3,7 @@ import {User, UserPayload} from "@/types/user";
 import {storage} from "@/lib/storage";
 
 async function getUsers(): Promise<User[]> {
-    const res = await fetch(`${API_BASE}/users`, {
+    const res = await fetch(`${API_BASE}/api/users`, {
         method: "GET",
         headers: {
             Accept: "application/json",
@@ -26,7 +26,7 @@ async function getUsers(): Promise<User[]> {
 }
 
 async function getUser(id: string): Promise<User> {
-    const res = await fetch(`${API_BASE}/users/${id}`, {
+    const res = await fetch(`${API_BASE}/api/users/${id}`, {
         method: "GET",
         headers: {
             Accept: "application/json",
@@ -50,7 +50,7 @@ async function getUser(id: string): Promise<User> {
 }
 
 async function createUser(user: UserPayload): Promise<User> {
-    const res = await fetch(`${API_BASE}/users`, {
+    const res = await fetch(`${API_BASE}/api/users`, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -75,7 +75,7 @@ async function createUser(user: UserPayload): Promise<User> {
 }
 
 async function updateUser(id: string, user: UserPayload): Promise<User> {
-    const res = await fetch(`${API_BASE}/users/${id}`, {
+    const res = await fetch(`${API_BASE}/api/users/${id}`, {
         method: "PUT",
         headers: {
             Accept: "application/json",
@@ -100,7 +100,7 @@ async function updateUser(id: string, user: UserPayload): Promise<User> {
 }
 
 async function deleteUser(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/users/${id}`, {
+    const res = await fetch(`${API_BASE}/api/users/${id}`, {
         method: "DELETE",
         headers: {
             Accept: "application/json",
@@ -121,7 +121,7 @@ async function deleteUser(id: string): Promise<void> {
 }
 
 async function updateMyProfile(user: User): Promise<User> {
-    const res = await fetch(`${API_BASE}/settings/profile`, {
+    const res = await fetch(`${API_BASE}/api/settings/profile`, {
         method: "PUT",
         headers: {
             Accept: "application/json",

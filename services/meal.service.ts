@@ -3,7 +3,7 @@ import { Meal } from "@/types/meal";
 import {storage} from "@/lib/storage";
 
 async function getAllMeals(): Promise<Meal[]> {
-    const res = await fetch(`${API_BASE}/meals`, {
+    const res = await fetch(`${API_BASE}/api/meals`, {
         method: "GET",
         headers: {
             Accept: "application/json",

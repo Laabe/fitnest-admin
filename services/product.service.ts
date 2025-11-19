@@ -3,7 +3,7 @@ import {Product, ProductPayload} from "@/types/product";
 import {storage} from "@/lib/storage";
 
 async function getProducts(): Promise<Product[]> {
-    const res = await fetch(`${API_BASE}/products`, {
+    const res = await fetch(`${API_BASE}/api/products`, {
         method: "GET",
         headers: {
             Accept: "application/json",
@@ -26,7 +26,7 @@ async function getProducts(): Promise<Product[]> {
 }
 
 async function getProduct(id: string): Promise<Product> {
-    const res = await fetch(`${API_BASE}/products/${id}`, {
+    const res = await fetch(`${API_BASE}/api/products/${id}`, {
         method: "GET",
         headers: {
             Accept: "application/json",
@@ -50,7 +50,7 @@ async function getProduct(id: string): Promise<Product> {
 }
 
 async function createProduct(product: ProductPayload): Promise<Product> {
-    const res = await fetch(`${API_BASE}/products`, {
+    const res = await fetch(`${API_BASE}/api/products`, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -75,7 +75,7 @@ async function createProduct(product: ProductPayload): Promise<Product> {
 }
 
 async function updateProduct(id: string, product: ProductPayload): Promise<Product> {
-    const res = await fetch(`${API_BASE}/products/${id}`, {
+    const res = await fetch(`${API_BASE}/api/products/${id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -101,7 +101,7 @@ async function updateProduct(id: string, product: ProductPayload): Promise<Produ
 }
 
 async function deleteProduct(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/products/${id}`, {
+    const res = await fetch(`${API_BASE}/api/products/${id}`, {
         method: "DELETE",
         credentials: "include",
         headers: {

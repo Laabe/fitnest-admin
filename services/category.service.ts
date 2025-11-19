@@ -3,7 +3,7 @@ import {Category} from "@/types/category";
 import {storage} from "@/lib/storage";
 
 async function getAllCategories(): Promise<Category[]> {
-    const res = await fetch(`${API_BASE}/categories`, {
+    const res = await fetch(`${API_BASE}/api/categories`, {
         method: "GET",
         headers: {
             Accept: "application/json",
@@ -18,7 +18,7 @@ async function getAllCategories(): Promise<Category[]> {
 }
 
 async function getCategoryById(id: string): Promise<Category> {
-    const res = await fetch(`${API_BASE}/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
         method: "GET",
         headers: {
             Accept: "application/json",
@@ -32,7 +32,7 @@ async function getCategoryById(id: string): Promise<Category> {
 }
 
 async function createCategory(category: Category): Promise<Category> {
-    const res = await fetch(`${API_BASE}/categories`, {
+    const res = await fetch(`${API_BASE}/api/categories`, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -47,7 +47,7 @@ async function createCategory(category: Category): Promise<Category> {
 }
 
 async function editCategory(id: string, category: Category): Promise<Category> {
-    const res = await fetch(`${API_BASE}/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
         method: "PUT",
         headers: {
             Accept: "application/json",
@@ -62,7 +62,7 @@ async function editCategory(id: string, category: Category): Promise<Category> {
 }
 
 async function deleteCategory(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/api/categories/${id}`, {
         method: "DELETE",
         headers: {
             Accept: "application/json",
