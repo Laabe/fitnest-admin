@@ -54,7 +54,7 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
             </FormField>
 
             <FormField id="sku" label="SKU" error={errors.sku?.message}>
-                <Input {...register("sku")} />
+                <Input {...register("sku")} readOnly={true} />
             </FormField>
 
             <FormField id="description" label="Description" error={errors.description?.message}>
@@ -63,19 +63,19 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
 
             <div className="grid grid-cols-2 gap-4">
                 <FormField id="calories" label="Calories" error={errors.calories?.message}>
-                    <Input type="number" {...register("calories", { valueAsNumber: true })} />
+                    <Input {...register("calories", { valueAsNumber: true })} />
                 </FormField>
 
                 <FormField id="protein" label="Protein (g)" error={errors.protein?.message}>
-                    <Input type="number" {...register("protein", { valueAsNumber: true })} />
+                    <Input {...register("protein", { valueAsNumber: true })} />
                 </FormField>
 
                 <FormField id="carbohydrates" label="Carbs (g)" error={errors.carbohydrates?.message}>
-                    <Input type="number" {...register("carbohydrates", { valueAsNumber: true })} />
+                    <Input {...register("carbohydrates", { valueAsNumber: true })} />
                 </FormField>
 
                 <FormField id="fats" label="Fats (g)" error={errors.fats?.message}>
-                    <Input type="number" {...register("fats", { valueAsNumber: true })} />
+                    <Input {...register("fats", { valueAsNumber: true })} />
                 </FormField>
             </div>
 
