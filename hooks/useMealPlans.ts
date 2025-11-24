@@ -15,27 +15,43 @@ export function useMealPlans() {
     const params = useParams();
     const id = params.id as string;
 
-    async function getMealPlans() {
-        try {
-            setLoading(true);
-            const mealPlans = await mealPlanService.getAllPlans();
-            setMealPlans(mealPlans);
-            setError(null);
-        } catch {
-            setError("Failed to fetch meal plans");
-        } finally {
-            setLoading(false);
-        }
-    }
-
     async function getMealPlan() {
         try {
             setLoading(true);
             const mealPlan = await mealPlanService.getMealPlanById(id);
             setMealPlan(mealPlan);
-            setError(null);
-        } catch {
-            setError("Failed to fetch meal plan");
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to get meal plan");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function getMealPlans() {
+        try {
+            setLoading(true);
+            const mealPlans = await mealPlanService.getAllPlans();
+            setMealPlans(mealPlans);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to get meal plans");
         } finally {
             setLoading(false);
         }
