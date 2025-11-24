@@ -5,9 +5,14 @@ import {Plus} from "lucide-react";
 import {useMealPlans} from "@/hooks/useMealPlans";
 import MealPlanTable from "@/app/(protected)/meal-plans/components/meal-plans-table";
 import Link from "next/link";
+import {useEffect} from "react";
 
 export default function Page() {
-    const { mealPlans, loading, error, deleteMealPlan } = useMealPlans();
+    const { mealPlans, loading, error, deleteMealPlan, getMealPlans } = useMealPlans();
+
+    useEffect(() => {
+        getMealPlans();
+    }, [])
 
     if (loading) return <p>Loading categories...</p>;
     if (error) return <p className="text-red-500">{error}</p>;

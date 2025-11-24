@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useMeals } from "@/hooks/useMeals";
 import MealsTable from "@/app/(protected)/meals/components/meals-table";
 import MealDetailsSheet from "@/app/(protected)/meals/components/meal-details-sheet";
@@ -10,7 +10,7 @@ import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
 
 export default function MealsPage() {
-    const { data: meals, loading, error, deleteMeal, editMeal, addMeal } = useMeals();
+    const { meals, loading, error, deleteMeal, updateMeal, createMeal, getMeals } = useMeals();
 
     const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -27,6 +27,10 @@ export default function MealsPage() {
         setSelectedMeal(meal || null);
         setIsFormSheetOpen(true);
     }
+
+    useEffect(() => {
+        getMeals()
+    }, []);
 
     if (loading) return <p>Loading meals...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
@@ -66,9 +70,9 @@ export default function MealsPage() {
                 onClose={setIsFormSheetOpen}
                 onSave={(savedMeal) => {
                     if (typeof savedMeal === 'object' && savedMeal.id) {
-                        editMeal(savedMeal.id, savedMeal);
+                        updateMeal(savedMeal.id, savedMeal);
                     } else {
-                        addMeal(savedMeal);
+                        createMeal(savedMeal);
                     }
                 }}
             />
