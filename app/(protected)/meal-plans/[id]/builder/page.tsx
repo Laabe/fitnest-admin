@@ -20,17 +20,22 @@ import {
 import { Button } from "@/components/ui/button"
 import { useMealPlans } from "@/hooks/useMealPlans"
 import { useMeals } from "@/hooks/useMeals"
+import {MealType} from "@/types/meal-plan";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
 export interface RecipeMealAssignment {
     recipeId: string
     recipeName: string
-    mealType: "breakfast" | "lunch" | "dinner"
+    mealType: MealType
 }
 
 export default function BuilderPage() {
+    const router = useRouter();
+
     const [searchQuery, setSearchQuery] = useState("")
     const [recipeMeals, setRecipeMeals] = useState<RecipeMealAssignment[]>([])
-
     const { meals, getMeals } = useMeals()
     const { buildMealPlan, loading, mealPlan, getMealPlan } = useMealPlans()
 
@@ -76,7 +81,14 @@ export default function BuilderPage() {
     }, [mealPlan, meals])
 
     const onSubmit = async (values: mealPlanBuildFormValues) => {
-        await buildMealPlan(values)
+        buildMealPlan(values)
+            .then(() => {
+                router.push("/meal-plans")
+                toast.success("Meal plans built successfully.")
+            })
+            .catch((err) => {
+            toast.error(err.message);
+        })
     }
 
     const filteredRecipes = meals.filter(recipe =>
