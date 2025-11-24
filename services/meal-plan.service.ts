@@ -2,6 +2,7 @@ import { API_BASE } from "@/lib/env";
 import { MealPlan } from "@/types/meal-plan";
 import {MealPlanFormValues} from "@/validations/meal-plan.schema";
 import {storage} from "@/lib/storage";
+import {mealPlanBuilderFormValues} from "@/validations/meal-plan-builder.schema";
 
 async function getAllPlans(): Promise<MealPlan[]> {
     const res = await fetch(`${API_BASE}/api/meal-plans`, {
@@ -121,10 +122,36 @@ async function deleteMealPlan(id: string): Promise<void> {
     }
 }
 
+async function buildMealPlan(id: string, mealPlanBuilder: mealPlanBuilderFormValues): Promise<void> {
+    const res = await fetch(`${API_BASE}/api/meal-plans/${id}/builder`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${storage.getToken()}`,
+        },
+        body: JSON.stringify(mealPlanBuilder),
+    });
+
+    if (!res.ok) {
+        let errorData: any;
+        try {
+            errorData = await res.json();
+        } catch {
+            throw new Error(`Failed to build meal plan`);
+        }
+        throw errorData;
+    }
+
+    const json = await res.json();
+    return json.data;
+}
+
 export const mealPlanService = {
     getAllPlans,
     getMealPlanById,
     createMealPlan,
     editMealPlan,
     deleteMealPlan,
+    buildMealPlan,
 };
