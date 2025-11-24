@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
-import { MealPlan } from "@/types/meal-plan";
-import { mealPlanService } from "@/services/meal-plan.service";
+import {useEffect, useState} from "react";
+import {MealPlan} from "@/types/meal-plan";
+import {mealPlanService} from "@/services/meal-plan.service";
 import {MealPlanFormValues} from "@/validations/meal-plan.schema";
 import {mealPlanBuildFormValues} from "@/validations/meal-plan-build.schema";
 import {useParams} from "next/navigation";
@@ -9,28 +9,39 @@ import {useParams} from "next/navigation";
 
 export function useMealPlans() {
     const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
+    const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const params = useParams();
     const id = params.id as string;
 
-    useEffect(() => {
-        async function fetchAll() {
-            try {
-                setLoading(true);
-                const mealPlans = await mealPlanService.getAllPlans();
-                setMealPlans(mealPlans);
-                setError(null);
-            } catch {
-                setError("Failed to fetch meal plans");
-            } finally {
-                setLoading(false);
-            }
+    async function getMealPlans() {
+        try {
+            setLoading(true);
+            const mealPlans = await mealPlanService.getAllPlans();
+            setMealPlans(mealPlans);
+            setError(null);
+        } catch {
+            setError("Failed to fetch meal plans");
+        } finally {
+            setLoading(false);
         }
-        fetchAll();
-    }, []);
+    }
 
-    async function addMealPlan(mealPlan: MealPlanFormValues) {
+    async function getMealPlan() {
+        try {
+            setLoading(true);
+            const mealPlan = await mealPlanService.getMealPlanById(id);
+            setMealPlan(mealPlan);
+            setError(null);
+        } catch {
+            setError("Failed to fetch meal plan");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function createMealPlan(mealPlan: MealPlanFormValues) {
         setLoading(true);
         try {
             return await mealPlanService.createMealPlan(mealPlan);
@@ -50,7 +61,7 @@ export function useMealPlans() {
         }
     }
 
-    async function editMealPlan(id: string, mealPlan: Partial<MealPlanFormValues>) {
+    async function updateMealPlan(id: string, mealPlan: Partial<MealPlanFormValues>) {
         try {
             setLoading(true);
             return await mealPlanService.editMealPlan(id, mealPlan);
@@ -111,5 +122,16 @@ export function useMealPlans() {
         }
     }
 
-    return {mealPlans, loading, error, addMealPlan, editMealPlan, deleteMealPlan, buildMealPlan};
+    return {
+        error,
+        loading,
+        mealPlan,
+        mealPlans,
+        getMealPlan,
+        getMealPlans,
+        createMealPlan,
+        updateMealPlan,
+        deleteMealPlan,
+        buildMealPlan
+    };
 }
