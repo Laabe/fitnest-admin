@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal } from "lucide-react";
 import { DataTable } from "@/components/data-table/data-table";
 import {MealPlan} from "@/types/meal-plan";
+import {useRouter} from "next/navigation";
 
 interface MealPlanTableProps {
     mealPlans: MealPlan[];
@@ -14,6 +15,7 @@ interface MealPlanTableProps {
 }
 
 export default function MealPlanTable({ mealPlans, onDelete }: MealPlanTableProps) {
+    const router = useRouter();
     const columns = React.useMemo(() => {
         return baseColumns.map((col) => {
             if (col.id === "actions") {
@@ -30,8 +32,9 @@ export default function MealPlanTable({ mealPlans, onDelete }: MealPlanTableProp
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>View</DropdownMenuItem>
-                                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem disabled={true}>View</DropdownMenuItem>
+                                    <DropdownMenuItem disabled={true}>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => router.push(`/meal-plans/${meal.id}/builder`)}>Build</DropdownMenuItem>
                                     <DropdownMenuItem className="text-red-500" onClick={() => onDelete(meal.id)}>Delete</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
