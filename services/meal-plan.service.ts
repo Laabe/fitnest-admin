@@ -2,7 +2,7 @@ import { API_BASE } from "@/lib/env";
 import { MealPlan } from "@/types/meal-plan";
 import {MealPlanFormValues} from "@/validations/meal-plan.schema";
 import {storage} from "@/lib/storage";
-import {mealPlanBuilderFormValues} from "@/validations/meal-plan-builder.schema";
+import {mealPlanBuildFormValues} from "@/validations/meal-plan-build.schema";
 
 async function getAllPlans(): Promise<MealPlan[]> {
     const res = await fetch(`${API_BASE}/api/meal-plans`, {
@@ -122,7 +122,7 @@ async function deleteMealPlan(id: string): Promise<void> {
     }
 }
 
-async function buildMealPlan(id: string, mealPlanBuilder: mealPlanBuilderFormValues): Promise<void> {
+async function buildMealPlan(id: string, mealPlanBuilder: mealPlanBuildFormValues): Promise<void> {
     const res = await fetch(`${API_BASE}/api/meal-plans/${id}/builder`, {
         method: "POST",
         headers: {

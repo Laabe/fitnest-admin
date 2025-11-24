@@ -3,12 +3,16 @@ import { useEffect, useState } from "react";
 import { MealPlan } from "@/types/meal-plan";
 import { mealPlanService } from "@/services/meal-plan.service";
 import {MealPlanFormValues} from "@/validations/meal-plan.schema";
+import {mealPlanBuildFormValues} from "@/validations/meal-plan-build.schema";
+import {useParams} from "next/navigation";
 
 
 export function useMealPlans() {
     const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const params = useParams();
+    const id = params.id as string;
 
     useEffect(() => {
         async function fetchAll() {
@@ -87,5 +91,25 @@ export function useMealPlans() {
         }
     }
 
-    return {mealPlans, loading, error, addMealPlan, editMealPlan, deleteMealPlan};
+    async function buildMealPlan(mealPlanBuild: mealPlanBuildFormValues) {
+        setLoading(true);
+        try {
+            return await mealPlanService.buildMealPlan(id, mealPlanBuild);
+        } catch (err: any) {
+            if (err.errors) {
+                const messages = Object.values(err.errors).flat().join("\n");
+                throw new Error(messages);
+            }
+
+            if (err.message) {
+                throw new Error(err.message);
+            }
+
+            throw new Error("Failed to build meal plan");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return {mealPlans, loading, error, addMealPlan, editMealPlan, deleteMealPlan, buildMealPlan};
 }
