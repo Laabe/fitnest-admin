@@ -1,5 +1,5 @@
 "use client";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {MealPlan} from "@/types/meal-plan";
 import {mealPlanService} from "@/services/meal-plan.service";
 import {MealPlanFormValues} from "@/validations/meal-plan.schema";
