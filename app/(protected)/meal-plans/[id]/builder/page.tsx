@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/button"
 import { useMealPlans } from "@/hooks/useMealPlans"
 import { useMeals } from "@/hooks/useMeals"
 import {MealType} from "@/types/meal-plan";
-import {router} from "next/client";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
 
