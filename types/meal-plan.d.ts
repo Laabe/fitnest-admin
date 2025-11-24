@@ -1,29 +1,18 @@
-export interface Meal {
-    included: boolean;
-    price: number;
-    recipes: string[]; // UUIDs
-}
-
-interface BillingPeriod {
-    weekly: boolean,
-    monthly: boolean,
-}
-
-interface Snacks {
-    included: boolean,
-    price: number,
-}
+export type MealType = "breakfast" | "lunch" | "dinner";
 
 export interface MealPlan {
     id?: string,
     name: string,
     description: string,
-    photo?: File | null,
-    snacks: Snacks,
-    billingPeriod: BillingPeriod,
+    sku: string,
+    image?: string,
+    breakfast_price_per_day: number,
+    lunch_price_per_day: number,
+    dinner_price_per_day: number,
+    snack_price_per_day: number,
     meals: {
-        breakfast: Meal,
-        lunch: Meal,
-        dinner: Meal,
+        breakfast: string[],
+        lunch: string[],
+        dinner: string[],
     },
 }

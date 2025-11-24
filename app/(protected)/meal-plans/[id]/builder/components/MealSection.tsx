@@ -7,6 +7,7 @@ import {UseFormReturn} from "react-hook-form"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {FormField, FormItem} from "@/components/ui/form"
 import {mealPlanBuildFormValues} from "@/validations/meal-plan-build.schema"
+import {MealType} from "@/types/meal-plan";
 
 interface MealRecipe {
     recipeId: string
@@ -16,7 +17,7 @@ interface MealRecipe {
 
 interface MealSectionProps {
     title: string
-    mealType: "breakfast" | "lunch" | "dinner"
+    mealType: MealType
     recipes: MealRecipe[]
     onRemoveRecipe: (index: number) => void
     getRecipeDetails?: (

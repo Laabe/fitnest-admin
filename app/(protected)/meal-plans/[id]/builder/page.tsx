@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useEffect, useState} from "react"
+import React, { useEffect, useState } from "react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -14,12 +14,12 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
     mealPlanBuildFormValues,
-    mealPlanBuildSchema
+    mealPlanBuildSchema,
 } from "@/validations/meal-plan-build.schema"
 
 import { Button } from "@/components/ui/button"
 import { useMealPlans } from "@/hooks/useMealPlans"
-import {useMeals} from "@/hooks/useMeals";
+import { useMeals } from "@/hooks/useMeals"
 
 export interface RecipeMealAssignment {
     recipeId: string
@@ -27,11 +27,13 @@ export interface RecipeMealAssignment {
     mealType: "breakfast" | "lunch" | "dinner"
 }
 
-export default function App() {
+export default function BuilderPage() {
     const [searchQuery, setSearchQuery] = useState("")
     const [recipeMeals, setRecipeMeals] = useState<RecipeMealAssignment[]>([])
-    const { meals, getMeals } = useMeals();
+
+    const { meals, getMeals } = useMeals()
     const { buildMealPlan, loading, mealPlan, getMealPlan } = useMealPlans()
+
 
     useEffect(() => {
         getMeals()
@@ -45,9 +47,33 @@ export default function App() {
                 breakfast: [],
                 lunch: [],
                 dinner: [],
-            }
-        }
+            },
+        },
     })
+
+    // --------------------------------------------------
+    // HYDRATE FORM IF MEAL PLAN EXISTS
+    // --------------------------------------------------
+    useEffect(() => {
+        if (!mealPlan) return
+
+        const breakfast = mealPlan.meals.breakfast?.map(r => r) ?? []
+        const lunch = mealPlan.meals.lunch?.map(r => r) ?? []
+        const dinner = mealPlan.meals.dinner?.map(r => r) ?? []
+
+        form.setValue("meals.breakfast", breakfast)
+        form.setValue("meals.lunch", lunch)
+        form.setValue("meals.dinner", dinner)
+
+        // also hydrate local UI assignments
+        const assigned = [
+            ...breakfast.map(id => ({ recipeId: id, recipeName: meals.find(m => m.id === id)?.name || "", mealType: "breakfast" as const })),
+            ...lunch.map(id => ({ recipeId: id, recipeName: meals.find(m => m.id === id)?.name || "", mealType: "lunch" as const })),
+            ...dinner.map(id => ({ recipeId: id, recipeName: meals.find(m => m.id === id)?.name || "", mealType: "dinner" as const })),
+        ]
+
+        setRecipeMeals(assigned)
+    }, [mealPlan, meals])
 
     const onSubmit = async (values: mealPlanBuildFormValues) => {
         await buildMealPlan(values)
@@ -55,24 +81,47 @@ export default function App() {
 
     const filteredRecipes = meals.filter(recipe =>
         recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    )
 
     const handleAddRecipe = (recipe: Meal, mealType: RecipeMealAssignment["mealType"]) => {
-        setRecipeMeals([...recipeMeals, {
-            recipeId: recipe.id!,
-            recipeName: recipe.name,
-            mealType,
-        }])
+        const updated = [
+            ...recipeMeals,
+            {
+                recipeId: recipe.id!,
+                recipeName: recipe.name,
+                mealType,
+            },
+        ]
+
+        setRecipeMeals(updated)
+
+        form.setValue(
+            `meals.${mealType}`,
+            updated
+                .filter(r => r.mealType === mealType)
+                .map(r => r.recipeId)
+        )
     }
 
     const handleRemoveRecipe = (index: number) => {
-        setRecipeMeals(recipeMeals.filter((_, i) => i !== index))
+        const removed = recipeMeals[index]
+        if (!removed) return
+
+        const updated = recipeMeals.filter((_, i) => i !== index)
+        setRecipeMeals(updated)
+
+        form.setValue(
+            `meals.${removed.mealType}`,
+            updated
+                .filter(r => r.mealType === removed.mealType)
+                .map(r => r.recipeId)
+        )
     }
 
     const getRecipesForMeal = (mealType: RecipeMealAssignment["mealType"]) =>
         recipeMeals
-            .map((meal, index) => ({ ...meal, index }))
-            .filter(meal => meal.mealType === mealType)
+            .map((m, index) => ({ ...m, index }))
+            .filter(m => m.mealType === mealType)
 
     const getRecipeDetails = (id: string) => {
         const r = meals.find(r => r.id === id)
@@ -88,7 +137,6 @@ export default function App() {
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col p-4 min-h-min flex-1">
-            {/* HEADER */}
             <div className="mb-6 flex items-baseline justify-between gap-2">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight">
@@ -105,7 +153,6 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-[30%_70%] gap-6">
-
                 {/* LEFT: RECIPES */}
                 <div className="flex flex-col">
                     <div className="mb-4 relative">
@@ -167,7 +214,6 @@ export default function App() {
                         form={form}
                     />
                 </div>
-
             </div>
         </form>
     )
