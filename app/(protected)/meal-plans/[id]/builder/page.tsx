@@ -5,7 +5,6 @@ import { Search } from 'lucide-react';
 import {RecipeCard} from "@/app/(protected)/meal-plans/[id]/builder/components/recipeCard";
 import {MealSection} from "@/app/(protected)/meal-plans/[id]/builder/components/MealSection";
 import {Meal} from "@/types/meal";
-import {MealPlanForm} from "@/app/(protected)/meal-plans/components/meal-plan-form";
 
 
 export interface MealAssignment {
