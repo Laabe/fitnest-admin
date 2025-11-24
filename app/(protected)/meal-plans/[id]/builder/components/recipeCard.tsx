@@ -3,7 +3,7 @@
 import React, {useState} from "react"
 import {Plus, Check} from "lucide-react"
 import {Meal} from "@/types/meal"
-import {MealAssignment} from "@/app/(protected)/meal-plans/[id]/builder/page"
+import {RecipeMealAssignment} from "@/app/(protected)/meal-plans/[id]/builder/page"
 
 import {Card, CardContent, CardFooter} from "@/components/ui/card"
 import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover"
@@ -11,7 +11,7 @@ import {Button} from "@/components/ui/button"
 
 interface RecipeCardProps {
     recipe: Meal
-    meals: MealAssignment[]
+    meals: RecipeMealAssignment[]
     onAddRecipe: (
         recipe: Meal,
         mealType: "breakfast" | "lunch" | "dinner"
