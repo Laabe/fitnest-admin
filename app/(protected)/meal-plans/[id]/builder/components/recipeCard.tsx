@@ -52,17 +52,13 @@ export function RecipeCard({recipe, meals, onAddRecipe}: RecipeCardProps) {
                         </h3>
 
                         <div className="flex items-center gap-3 text-muted-foreground mb-3">
-              <span className="text-sm font-medium">
-                {recipe.calories} cal
-              </span>
+                            <span className={"text-xs font-medium"}>Cals: {recipe.calories}</span>
                             <div className="w-px h-4 bg-border"></div>
-                            <span className="text-sm">P: {recipe.protein}g</span>
+                            <span className={"text-xs font-medium"}>Protein: {recipe.protein}g</span>
                             <div className="w-px h-4 bg-border"></div>
-                            <span className="text-sm">
-                C: {recipe.carbohydrates}g
-              </span>
+                            <span className={"text-xs font-medium"}>Carbs: {recipe.carbohydrates}g</span>
                             <div className="w-px h-4 bg-border"></div>
-                            <span className="text-sm">F: {recipe.fats}g</span>
+                            <span className={"text-xs font-medium"}>Fats: {recipe.fats}g</span>
                         </div>
 
                         {assignedMeals.length > 0 && (
@@ -72,8 +68,8 @@ export function RecipeCard({recipe, meals, onAddRecipe}: RecipeCardProps) {
                                         key={mealType}
                                         className="inline-flex items-center px-2.5 py-1 rounded-md text-xs bg-secondary text-secondary-foreground border border-border"
                                     >
-                    {getMealBadgeLabel(mealType)}
-                  </span>
+                                        {getMealBadgeLabel(mealType)}
+                                    </span>
                                 ))}
                             </div>
                         )}
@@ -123,8 +119,8 @@ export function RecipeCard({recipe, meals, onAddRecipe}: RecipeCardProps) {
 
                                         {assignedMeals.includes(mealType) && (
                                             <span className="text-xs text-muted-foreground">
-                        Added
-                      </span>
+                                                Added
+                                            </span>
                                         )}
                                     </button>
                                 )
