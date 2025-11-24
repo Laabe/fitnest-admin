@@ -23,7 +23,7 @@ interface MealPlanFormProps {
 
 export function MealPlanForm({defaultValues}: MealPlanFormProps) {
     const router = useRouter();
-    const {addMealPlan, loading} = useMealPlans();
+    const {createMealPlan, loading} = useMealPlans();
 
     const {
         watch,
@@ -46,7 +46,7 @@ export function MealPlanForm({defaultValues}: MealPlanFormProps) {
     })
 
     const onSubmit = async (data: MealPlanFormValues) => {
-        await addMealPlan(data)
+        await createMealPlan(data)
             .then(() => {
                 router.push("/meal-plans")
                 toast.success("Meal Plan successfully created!");
