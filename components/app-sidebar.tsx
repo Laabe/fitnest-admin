@@ -4,9 +4,8 @@ import * as React from "react"
 import {
     Blocks,
     HandPlatterIcon,
-    LayoutDashboardIcon,
+    LayoutDashboardIcon, ShoppingCart,
     Users,
-    Wheat
 } from "lucide-react"
 
 import {NavMain} from "@/components/nav-main"
@@ -16,21 +15,49 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
 import {User} from "@/types/user"
 import {storage} from "@/lib/storage";
+import Link from "next/link";
+import {ROUTES} from "@/lib/routes";
+import Image from "next/image";
 
 const navItems = [
-    {title: "Dashboard", icon: LayoutDashboardIcon, url: "/dashboard"},
-    {title: "Users", icon: Users, url: "/users"},
-    {title: "Meals", icon: HandPlatterIcon, url: "/meals"},
-    {title: "Categories", icon: Blocks, url: "/categories"},
-    {title: "Meal Plans", icon: Blocks, url: "/meal-plans"},
-    {title: "Products", icon: Wheat, url: "/products"},
+    {
+        title: "Dashboard",
+        icon: LayoutDashboardIcon,
+        url: ROUTES.DASHBOARD,
+    },
+    {
+        title: "Users",
+        icon: Users,
+        url: ROUTES.USERS.INDEX,
+    },
+    {
+        title: "Meals",
+        icon: HandPlatterIcon,
+        url: ROUTES.MEALS.INDEX,
+    },
+    {
+        title: "Meal Plans",
+        icon: Blocks,
+        url: ROUTES.MEAL_PLANS.INDEX,
+    },
+    {
+        title: "Express Shop",
+        icon: ShoppingCart,
+        items: [
+            {
+                title: "Categories",
+                url: ROUTES.CATEGORIES.INDEX
+            },
+            {
+                title: "Products",
+                url: ROUTES.PRODUCTS.INDEX
+            },
+        ]
+    },
 ]
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
@@ -49,27 +76,25 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 
     return (
         <Sidebar variant="inset" {...props}>
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <a href="/" className="relative block">
-                                <img
-                                    src="https://obtmksfewry4ishp.public.blob.vercel-storage.com/Logo/Logo-Fitnest-Vert-v412yUnhxctld0VkvDHD8wXh8H2GMQ.png"
-                                    alt="Fitnest Logo"
-                                    className="absolute inset-0 w-4/5 object-cover dark:brightness-[0.2] dark:grayscale"
-                                />
-                            </a>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+            <SidebarHeader className="border-b px-4 py-4">
+                <Link href={ROUTES.DASHBOARD} className="flex items-center justify-start">
+                    <div className="relative h-12 w-full">
+                        <Image
+                            src="https://obtmksfewry4ishp.public.blob.vercel-storage.com/Logo/Logo-Fitnest-Vert-v412yUnhxctld0VkvDHD8wXh8H2GMQ.png"
+                            alt="Fitnest Logo"
+                            fill
+                            className="object-contain object-left"
+                            priority
+                        />
+                    </div>
+                </Link>
             </SidebarHeader>
 
             <SidebarContent>
                 <NavMain items={navItems}/>
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className="border-t">
                 <NavUser user={user}/>
             </SidebarFooter>
 

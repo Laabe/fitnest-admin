@@ -40,7 +40,7 @@ export default function BuilderPage() {
 
 
     useEffect(() => {
-        getMeals()
+        getMeals({status: "active"})
         getMealPlan()
     }, [])
 
@@ -61,9 +61,9 @@ export default function BuilderPage() {
     useEffect(() => {
         if (!mealPlan) return
 
-        const breakfast = mealPlan.meals.breakfast?.map(r => r) ?? []
-        const lunch = mealPlan.meals.lunch?.map(r => r) ?? []
-        const dinner = mealPlan.meals.dinner?.map(r => r) ?? []
+        const breakfast = mealPlan.meals?.breakfast?.map(r => r) ?? []
+        const lunch = mealPlan.meals?.lunch?.map(r => r) ?? []
+        const dinner = mealPlan.meals?.dinner?.map(r => r) ?? []
 
         form.setValue("meals.breakfast", breakfast)
         form.setValue("meals.lunch", lunch)
