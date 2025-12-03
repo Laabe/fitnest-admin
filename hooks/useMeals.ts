@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { mealService } from "@/services/meal.service";
+import {MealFilters, mealService} from "@/services/meal.service";
 import { Meal } from "@/types/meal";
 import {toast} from "sonner";
 import {useParams} from "next/navigation";
@@ -27,10 +27,10 @@ export function useMeals() {
         }
     }
 
-    async function getMeals() {
+    async function getMeals(filters?: MealFilters) {
         try {
             setLoading(true);
-            const meals = await mealService.getAllMeals();
+            const meals = await mealService.getAllMeals(filters);
             setMeals(meals);
             setError(null);
         } catch {

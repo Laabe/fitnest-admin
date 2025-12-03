@@ -2,8 +2,20 @@ import { API_BASE } from "@/lib/env";
 import { Meal } from "@/types/meal";
 import {storage} from "@/lib/storage";
 
-async function getAllMeals(): Promise<Meal[]> {
-    const res = await fetch(`${API_BASE}/api/meals`, {
+// Define filter interface for type safety
+export interface MealFilters {
+    status?: string;
+}
+
+async function getAllMeals(filters?: MealFilters): Promise<Meal[]> {
+    // Build query string from filters
+    const params = new URLSearchParams();
+
+    if (filters?.status) params.append("status", filters.status);
+    const queryString = params.toString();
+    const url = `${API_BASE}/api/meals${queryString ? `?${queryString}` : ""}`;
+
+    const res = await fetch(url, {
         method: "GET",
         headers: {
             Accept: "application/json",
