@@ -6,7 +6,6 @@ import {
     HandPlatterIcon,
     LayoutDashboardIcon, ShoppingCart,
     Users,
-    Wheat
 } from "lucide-react"
 
 import {NavMain} from "@/components/nav-main"
