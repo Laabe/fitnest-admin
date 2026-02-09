@@ -31,14 +31,15 @@ export function MealFormSheet({ meal, open, onClose, onSave }: MealFormSheetProp
 
     return (
         <Sheet open={open} onOpenChange={onClose}>
-            <SheetContent className="min-w-1/3 max-w-2xl sm:w-full">
+            <SheetContent className="min-w-1/3 max-w-2xl sm:w-full flex flex-col">
                 <SheetHeader>
                     <SheetTitle>{meal ? "Edit Meal" : "Add Meal"}</SheetTitle>
                 </SheetHeader>
 
-                {error && <p className="text-red-500">{error}</p>}
-
-                <MealForm defaultValues={meal} onSubmit={handleSubmit} loading={loading} />
+                <div className="flex-1 overflow-y-auto">
+                    {error && <p className="text-red-500 mb-4">{error}</p>}
+                    <MealForm defaultValues={meal} onSubmit={handleSubmit} loading={loading} />
+                </div>
             </SheetContent>
         </Sheet>
     );

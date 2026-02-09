@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect} from "react";
+import React, {useEffect, useCallback} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Meal } from "@/types/meal";
@@ -39,6 +39,8 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
         },
     });
 
+    const imageValue = watch("image");
+
     useEffect(() => {
         const mealName = watch("name");
         if (mealName) {
@@ -46,6 +48,11 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
             setValue('sku', generatedSKU)
         }
     })
+
+    // Memoize the onChange callback to prevent re-renders
+    const handleImageChange = useCallback((url: string | string[]) => {
+        setValue("image", url as string, { shouldValidate: true });
+    }, [setValue])
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4">
@@ -79,8 +86,13 @@ export function MealForm({ defaultValues, onSubmit, loading }: MealFormProps) {
                 </FormField>
             </div>
 
-            <FormField id="image" label="Image URL" error={errors.image?.message}>
-                <Dropzone multiple={false} />
+            <FormField id="image" label="Image" error={errors.image?.message}>
+                <Dropzone 
+                    multiple={false}
+                    defaultValue={imageValue}
+                    onChange={handleImageChange}
+                    previewSize="sm"
+                />
             </FormField>
 
             <Button type="submit" disabled={loading}>

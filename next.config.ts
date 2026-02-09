@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
                 port: '',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'fls-a061ca9c-da8c-490f-9693-9a12f9c91e4d.laravel.cloud',
+                port: '',
+                pathname: '/**',
+            },
         ],
     },
 };
