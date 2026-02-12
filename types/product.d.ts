@@ -28,7 +28,7 @@ export interface Product {
     category: Category,
     variants?: Variant[],
     status: status,
-    images?: File[],
+    images?: string[],
     created_at: Datetime
 }
 
@@ -42,5 +42,5 @@ export interface ProductPayload {
     category_id: string,
     variants?: Variant[],
     status: status,
-    images?: File[],
+    images?: string[],
 }

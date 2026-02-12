@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { FormField } from "@/components/form-field";
 import { Input } from "@/components/ui/input";
@@ -53,6 +53,9 @@ export function ProductForm({
         reset,
     } = methods;
 
+    /** Ref to hold latest image URLs; fallback when form state does not persist them */
+    const imagesRef = useRef<string[]>([]);
+
     if (mode === "create") loading = false
 
     // when `initialValues` changes (e.g., on edit load), update the form
@@ -60,10 +63,15 @@ export function ProductForm({
         if (initialValues) reset(initialValues, { keepDirtyValues: true });
     }, [initialValues, reset]);
 
+    const handleFormSubmit = (data: ProductFormValues) => {
+        const images = data.images?.length ? data.images : imagesRef.current;
+        onSubmit({ ...data, images: images ?? [] });
+    };
+
     return (
         <div className="w-2/3 mx-auto">
             <FormProvider {...methods}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                     <div className="mb-4 mt-2 flex flex-col justify-between space-y-4 lg:flex-row lg:items-center lg:space-y-2">
                         <h1 className="text-2xl font-bold tracking-tight">
                             {mode === "create" ? "Add Product" : "Edit Product"}
@@ -120,7 +128,27 @@ export function ProductForm({
                             <Card>
                                 <CardTitle className="px-5">Product Images</CardTitle>
                                 <CardContent>
-                                    <Dropzone multiple={true}/>
+                                    <FormField
+                                        id="images"
+                                        label="Upload images"
+                                        error={errors.images?.message}
+                                    >
+                                        <Controller
+                                            name="images"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Dropzone
+                                                    multiple={true}
+                                                    defaultValue={field.value ?? []}
+                                                    onChange={(urls) => {
+                                                        const arr = Array.isArray(urls) ? urls : urls ? [urls] : [];
+                                                        imagesRef.current = arr;
+                                                        field.onChange(arr);
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </FormField>
                                 </CardContent>
                             </Card>
                             <Card>
