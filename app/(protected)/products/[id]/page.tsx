@@ -90,13 +90,13 @@ export default function Page() {
                     <div className={"sticky top-20 space-y-4"}>
                         <Carousel>
                             <CarouselContent>
-                                {Array.from({length: 5}).map((_, index) => (
+                                {product?.images?.map((image: string, index: number) => (
                                     <CarouselItem key={index}>
                                         <div className="p-1">
                                             <Card>
                                                 <CardContent
                                                     className="flex aspect-square items-center justify-center p-6">
-                                                    <span className="text-4xl font-semibold">{index + 1}</span>
+                                                    <img src={image} alt={product.name} className="size-full object-contain" />
                                                 </CardContent>
                                             </Card>
                                         </div>
