@@ -41,9 +41,14 @@ export function Dropzone({ multiple = true, onChange, defaultValue, previewSize 
     // Track previous URLs to prevent infinite loops
     const prevUrlsRef = useRef<string>('')
 
+    // Keep onChange ref current to avoid stale closures and unnecessary effect re-runs
+    const onChangeRef = useRef(onChange)
+    onChangeRef.current = onChange
+
     // Sync uploaded files with parent component
     useEffect(() => {
-        if (!onChange) return
+        const handler = onChangeRef.current
+        if (!handler) return
 
         const uploadedUrls = uploadedFiles
             .filter((f) => f.publicUrl && !f.isUploading)
@@ -56,9 +61,9 @@ export function Dropzone({ multiple = true, onChange, defaultValue, previewSize 
         // Only call onChange if URLs actually changed
         if (prevUrlsRef.current !== currentUrlsString) {
             prevUrlsRef.current = currentUrlsString
-            onChange(multiple ? uploadedUrls : uploadedUrls[0] || '')
+            handler(multiple ? uploadedUrls : uploadedUrls[0] || '')
         }
-    }, [uploadedFiles, multiple, onChange])
+    }, [uploadedFiles, multiple])
 
     const uploadToS3 = async (file: File): Promise<string> => {
         try {
@@ -136,7 +141,7 @@ export function Dropzone({ multiple = true, onChange, defaultValue, previewSize 
                 }
             }
         },
-        [multiple, onChange]
+        [multiple]
     )
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({

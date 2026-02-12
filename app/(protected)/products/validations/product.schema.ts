@@ -15,7 +15,7 @@ export const ProductSchema = z.object({
     stock_quantity: z.number().min(0, "Stock must be a valid number"),
     status: z.enum(["active", "draft", "archived"]),
     category_id: z.uuid(),
-    images: z.array(z.instanceof(File)).optional(),
+    images: z.array(z.string().url()).optional(),
     variants: z
         .array(z.object({
             option: z.string(),
