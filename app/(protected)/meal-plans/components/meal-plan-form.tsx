@@ -1,12 +1,12 @@
 "use client"
 
-import React, {useEffect} from "react"
+import React, {useEffect, useRef} from "react"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
 import {Textarea} from "@/components/ui/textarea"
 import {BookOpen, DollarSign} from "lucide-react"
-import {useForm} from "react-hook-form"
+import {Controller, useForm} from "react-hook-form"
 import {MealPlanFormValues, mealPlanSchema} from "@/validations/meal-plan.schema"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {FormField} from "@/components/form-field"
@@ -30,6 +30,7 @@ export function MealPlanForm({defaultValues}: MealPlanFormProps) {
         register,
         setValue,
         handleSubmit,
+        control,
         formState: {errors},
     } = useForm<MealPlanFormValues>({
         resolver: zodResolver(mealPlanSchema),
@@ -45,8 +46,11 @@ export function MealPlanForm({defaultValues}: MealPlanFormProps) {
         }
     })
 
+    const imageRef = useRef<string>("");
+
     const onSubmit = async (data: MealPlanFormValues) => {
-        await createMealPlan(data)
+        const payload = {...data, image: data.image || imageRef.current || undefined};
+        await createMealPlan(payload)
             .then(() => {
                 router.push("/meal-plans")
                 toast.success("Meal Plan successfully created!");
@@ -91,8 +95,22 @@ export function MealPlanForm({defaultValues}: MealPlanFormProps) {
                                     />
                                 </FormField>
 
-                                <FormField id="image" label="Cover Image" >
-                                    <Dropzone multiple={false} />
+                                <FormField id="image" label="Cover Image" error={errors.image?.message}>
+                                    <Controller
+                                        name="image"
+                                        control={control}
+                                        render={({field}) => (
+                                            <Dropzone
+                                                multiple={false}
+                                                defaultValue={field.value ?? ""}
+                                                onChange={(url) => {
+                                                    const value = typeof url === "string" ? url : Array.isArray(url) ? url[0] ?? "" : "";
+                                                    imageRef.current = value;
+                                                    field.onChange(value || undefined);
+                                                }}
+                                            />
+                                        )}
+                                    />
                                 </FormField>
                             </CardContent>
                         </Card>
