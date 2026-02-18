@@ -51,6 +51,7 @@ export default function BuilderPage() {
                 breakfast: [],
                 lunch: [],
                 dinner: [],
+                snacks: [],
             },
         },
     })
@@ -64,16 +65,19 @@ export default function BuilderPage() {
         const breakfast = mealPlan.meals?.breakfast?.map(r => r) ?? []
         const lunch = mealPlan.meals?.lunch?.map(r => r) ?? []
         const dinner = mealPlan.meals?.dinner?.map(r => r) ?? []
+        const snacks = mealPlan.meals?.snacks?.map(r => r) ?? []
 
         form.setValue("meals.breakfast", breakfast)
         form.setValue("meals.lunch", lunch)
         form.setValue("meals.dinner", dinner)
+        form.setValue("meals.snacks", snacks)
 
         // also hydrate local UI assignments
         const assigned = [
             ...breakfast.map(id => ({ recipeId: id, recipeName: meals.find(m => m.id === id)?.name || "", mealType: "breakfast" as const })),
             ...lunch.map(id => ({ recipeId: id, recipeName: meals.find(m => m.id === id)?.name || "", mealType: "lunch" as const })),
             ...dinner.map(id => ({ recipeId: id, recipeName: meals.find(m => m.id === id)?.name || "", mealType: "dinner" as const })),
+            ...snacks.map(id => ({ recipeId: id, recipeName: meals.find(m => m.id === id)?.name || "", mealType: "snacks" as const })),
         ]
 
         setRecipeMeals(assigned)
@@ -196,8 +200,8 @@ export default function BuilderPage() {
                     </ScrollArea>
                 </div>
 
-                {/* RIGHT: MEAL SECTIONS */}
-                <div className="space-y-6">
+                {/* RIGHT: MEAL SECTIONS - 2 rows × 2 cols grid */}
+                <div className="grid grid-cols-2 gap-6">
                     <MealSection
                         title="Breakfast"
                         mealType="breakfast"
@@ -220,6 +224,15 @@ export default function BuilderPage() {
                         title="Dinner"
                         mealType="dinner"
                         recipes={getRecipesForMeal("dinner")}
+                        onRemoveRecipe={handleRemoveRecipe}
+                        getRecipeDetails={getRecipeDetails}
+                        form={form}
+                    />
+
+                    <MealSection
+                        title="Snacks"
+                        mealType="snacks"
+                        recipes={getRecipesForMeal("snacks")}
                         onRemoveRecipe={handleRemoveRecipe}
                         getRecipeDetails={getRecipeDetails}
                         form={form}

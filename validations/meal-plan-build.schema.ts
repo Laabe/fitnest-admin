@@ -5,6 +5,7 @@ export const mealPlanBuildSchema = z.object({
         breakfast: z.array(z.string()).catch([]),
         lunch: z.array(z.string()).catch([]),
         dinner: z.array(z.string()).catch([]),
+        snacks: z.array(z.string()).catch([]),
     })
 });
 
