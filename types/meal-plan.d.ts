@@ -1,4 +1,4 @@
-export type MealType = "breakfast" | "lunch" | "dinner";
+export type MealType = "breakfast" | "lunch" | "dinner" | "snacks";
 
 export interface MealPlan {
     id?: string,
@@ -14,5 +14,6 @@ export interface MealPlan {
         breakfast: string[],
         lunch: string[],
         dinner: string[],
+        snacks: string[],
     },
 }

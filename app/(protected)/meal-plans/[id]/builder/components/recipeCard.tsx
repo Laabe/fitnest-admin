@@ -14,7 +14,7 @@ interface RecipeCardProps {
     meals: RecipeMealAssignment[]
     onAddRecipe: (
         recipe: Meal,
-        mealType: "breakfast" | "lunch" | "dinner"
+        mealType: "breakfast" | "lunch" | "dinner" | "snacks"
     ) => void
 }
 
@@ -25,7 +25,7 @@ export function RecipeCard({recipe, meals, onAddRecipe}: RecipeCardProps) {
         .filter(meal => meal.recipeId === recipe.id)
         .map(meal => meal.mealType)
 
-    const handleMealSelect = (mealType: "breakfast" | "lunch" | "dinner") => {
+    const handleMealSelect = (mealType: "breakfast" | "lunch" | "dinner" | "snacks") => {
         if (assignedMeals.includes(mealType)) return
 
         onAddRecipe(recipe, mealType)
@@ -34,7 +34,7 @@ export function RecipeCard({recipe, meals, onAddRecipe}: RecipeCardProps) {
         setTimeout(() => setJustAdded(false), 1000)
     }
 
-    const getMealBadgeLabel = (mealType: "breakfast" | "lunch" | "dinner") =>
+    const getMealBadgeLabel = (mealType: "breakfast" | "lunch" | "dinner" | "snacks") =>
         mealType.charAt(0).toUpperCase() + mealType.slice(1)
 
     return (
@@ -103,7 +103,7 @@ export function RecipeCard({recipe, meals, onAddRecipe}: RecipeCardProps) {
 
                     <PopoverContent className="p-0 w-[200px]">
                         <div className="flex flex-col">
-                            {(["breakfast", "lunch", "dinner"] as const).map(
+                            {(["breakfast", "lunch", "dinner", "snacks"] as const).map(
                                 mealType => (
                                     <button
                                         key={mealType}
